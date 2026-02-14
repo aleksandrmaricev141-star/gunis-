@@ -1,0 +1,64 @@
+import { dailyTemplates, guildDefaults, guildQuestTemplates, upgrades } from '../config/gameData.js';
+
+export const todayKey = () => new Date().toISOString().slice(0, 10);
+
+export function createDailyTasks(key) {
+  return dailyTemplates.map((d) => ({
+    id: `${key}_${d.id}`,
+    type: d.id,
+    text: d.text,
+    target: d.target,
+    progress: 0,
+    done: false,
+    rewardEnergy: d.rewardEnergy,
+    rewardCrystals: d.rewardCrystals
+  }));
+}
+
+export function createGuildQuests(key) {
+  return guildQuestTemplates.map((q) => ({
+    id: `${key}_${q.id}`,
+    type: q.type,
+    text: q.text,
+    target: q.target,
+    progress: 0,
+    done: false,
+    rewardGuildXp: q.rewardGuildXp,
+    rewardCrystals: q.rewardCrystals
+  }));
+}
+
+export function defaultState() {
+  const key = todayKey();
+  return {
+    playerId: crypto?.randomUUID?.() || String(Date.now()),
+    playerName: 'Игрок',
+    isAdmin: false,
+    energy: 0,
+    crystals: 0,
+    essence: 0,
+    xp: 0,
+    totalEarned: 0,
+    totalUpgrades: 0,
+    clicks: 0,
+    upgradeLevels: Object.fromEntries(upgrades.map((u) => [u.id, 0])),
+    activeSkin: 'base',
+    unlockedSkins: ['base'],
+    artifacts: [],
+    completedChapters: [],
+    achievementClaimed: [],
+    dailyKey: key,
+    dailyTasks: createDailyTasks(key),
+    activeEffects: {},
+    abilityCooldowns: {},
+    expeditionRuns: {},
+    currentEvent: { index: 0, startedAt: Date.now() },
+    lastRating: 0,
+    activeGuild: null,
+    guildQuestKey: key,
+    guildQuests: createGuildQuests(key),
+    guilds: guildDefaults,
+    leaderboardPlayers: [],
+    leaderboardGuilds: []
+  };
+}
