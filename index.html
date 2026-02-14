@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Вертикаль: Орловская область — прототип</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <h1>Вертикаль: Орловская область</h1>
+    <div class="time-controls">
+      <span id="dateLabel">Месяц 1, Год 1</span>
+      <button id="nextMonthBtn">Следующий месяц</button>
+      <button id="auto3Btn">+3 месяца</button>
+      <button id="resetBtn" class="secondary">Сброс</button>
+    </div>
+  </header>
+
+  <section class="resources" id="resourceCards"></section>
+
+  <main class="layout">
+    <section class="panel map-panel">
+      <div class="panel-header">
+        <h2>Административная карта (упрощённая)</h2>
+        <select id="mapMode">
+          <option value="LOY">Лояльность</option>
+          <option value="INF">Инфраструктура</option>
+          <option value="ECO">Экономика</option>
+          <option value="RISK">Риск</option>
+          <option value="SERV">Сервисы</option>
+        </select>
+      </div>
+      <div id="districtGrid" class="district-grid"></div>
+    </section>
+
+    <section class="panel detail-panel">
+      <h2>Район / город</h2>
+      <div id="districtDetail"></div>
+
+      <h3>Бюджет района</h3>
+      <div class="budget-grid" id="budgetControls"></div>
+
+      <h3>Команды управления</h3>
+      <div class="stack">
+        <button id="deployCrisisTeam">Развернуть антикризисную команду</button>
+        <button id="deployEcoTeam" class="secondary">Развернуть экономический штаб</button>
+      </div>
+    </section>
+
+    <section class="panel right-panel">
+      <h2>Карьера и реформы</h2>
+
+      <div class="subpanel">
+        <h3>Фокусы карьеры</h3>
+        <div id="focusList" class="list"></div>
+      </div>
+
+      <div class="subpanel">
+        <h3>Реформы</h3>
+        <div id="reformList" class="list"></div>
+      </div>
+
+      <div class="subpanel">
+        <h3>Законы и политики</h3>
+        <div id="lawsList" class="laws"></div>
+      </div>
+    </section>
+  </main>
+
+  <section class="panel bottom">
+    <div class="metrics">
+      <div><strong>CS:</strong> <span id="careerScore"></span></div>
+      <div><strong>SUP:</strong> <span id="supportScore"></span></div>
+      <div><strong>RDI:</strong> <span id="rdiScore"></span></div>
+      <div><strong>Должность:</strong> <span id="rankLabel"></span></div>
+      <div><strong>Условие победы:</strong> <span id="victoryLabel"></span></div>
+    </div>
+    <h3>Журнал событий</h3>
+    <div id="log" class="log"></div>
+  </section>
+
+  <script src="app.js"></script>
+</body>
+</html>
