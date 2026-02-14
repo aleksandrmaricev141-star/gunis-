@@ -1,4 +1,4 @@
-export const STORAGE_KEY = 'neon-syndicate-v2';
+export const STORAGE_KEY = 'neon-syndicate-v3';
 
 export const upgrades = [
   { id: 'core', name: 'Квантовое ядро', baseCost: 25, click: 1, passive: 0 },
@@ -59,4 +59,15 @@ export const events = [
 export const expeditions = [
   { id: 'short', name: 'Короткий рейд', duration: 45, rewardEnergy: 180, rewardCrystals: 8 },
   { id: 'deep', name: 'Глубокая вылазка', duration: 120, rewardEnergy: 700, rewardCrystals: 30 }
+];
+
+export const guilds = [
+  { id: 'forge', name: 'Iron Forge', bonusClick: 1, bonusPassive: 0 },
+  { id: 'pulse', name: 'Pulse Order', bonusClick: 0, bonusPassive: 2 },
+  { id: 'veil', name: 'Shadow Veil', bonusClick: 1, bonusPassive: 1 }
+];
+
+export const guildQuestTemplates = [
+  { id: 'gq_clicks', text: 'Вклад: 60 кликов', target: 60, type: 'clicks', rewardGuildXp: 120, rewardCrystals: 12 },
+  { id: 'gq_earn', text: 'Вклад: 1200 энергии', target: 1200, type: 'earn', rewardGuildXp: 180, rewardCrystals: 15 }
 ];

@@ -1,4 +1,4 @@
-import { dailyTemplates, upgrades } from '../config/gameData.js';
+import { dailyTemplates, guildQuestTemplates, upgrades } from '../config/gameData.js';
 
 export const todayKey = () => new Date().toISOString().slice(0, 10);
 
@@ -12,6 +12,19 @@ export function createDailyTasks(key) {
     done: false,
     rewardEnergy: d.rewardEnergy,
     rewardCrystals: d.rewardCrystals
+  }));
+}
+
+export function createGuildQuests(key) {
+  return guildQuestTemplates.map((q) => ({
+    id: `${key}_${q.id}`,
+    type: q.type,
+    text: q.text,
+    target: q.target,
+    progress: 0,
+    done: false,
+    rewardGuildXp: q.rewardGuildXp,
+    rewardCrystals: q.rewardCrystals
   }));
 }
 
@@ -35,6 +48,10 @@ export function defaultState() {
     abilityCooldowns: {},
     expeditionRuns: {},
     currentEvent: { index: 0, startedAt: Date.now() },
-    lastRating: 0
+    lastRating: 0,
+    activeGuild: null,
+    guildXp: 0,
+    guildQuestKey: todayKey(),
+    guildQuests: createGuildQuests(todayKey())
   };
 }

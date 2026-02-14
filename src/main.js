@@ -13,16 +13,20 @@ import { cleanupEffects, renderAbilities } from './systems/abilities.js';
 import { rotateEventIfNeeded, renderEvent, events } from './systems/events.js';
 import { renderExpeditions } from './systems/expeditions.js';
 import { doPrestige, renderPrestige } from './systems/prestige.js';
+import { initTabs } from './systems/tabs.js';
+import { renderGuilds, trackGuild } from './systems/guilds.js';
 
 const state = load(defaultState());
 const tg = initTelegramUI();
 document.getElementById('tgUserLabel').textContent = `${tg.userName}, платформа: ${tg.platform}`;
+initTabs();
 
 function applyTickIncome(amount) {
   if (amount <= 0) return;
   state.energy += amount;
   state.totalEarned += amount;
   trackDaily(state, 'earn', amount);
+  trackGuild(state, 'earn', amount);
 }
 
 function refresh(meta = {}) {
@@ -30,7 +34,9 @@ function refresh(meta = {}) {
   cleanupEffects(state);
   rotateEventIfNeeded(state);
 
-  if (meta.type === 'upgrade') trackDaily(state, 'upgrade', meta.amount || 1);
+  if (meta.type === 'upgrade') {
+    trackDaily(state, 'upgrade', meta.amount || 1);
+  }
 
   renderCore(state);
   renderUpgrades(state, refresh);
@@ -43,6 +49,7 @@ function refresh(meta = {}) {
   renderEvent(state);
   renderExpeditions(state, refresh);
   renderPrestige(state);
+  renderGuilds(state, refresh);
 
   save(state);
 }
@@ -54,6 +61,8 @@ document.getElementById('tapButton').addEventListener('click', () => {
   state.clicks += 1;
   trackDaily(state, 'clicks', 1);
   trackDaily(state, 'earn', gain);
+  trackGuild(state, 'clicks', 1);
+  trackGuild(state, 'earn', gain);
   refresh();
 });
 
