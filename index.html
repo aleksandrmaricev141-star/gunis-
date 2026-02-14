@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>YouTube Live Counter + Telegram</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="container">
+      <h1>YouTube счётчик канала</h1>
+      <p class="hint">
+        Введите API-ключ и ID канала. Статистика обновляется каждые 10 секунд, включая метрики последних роликов.
+      </p>
+
+      <form id="counter-form" class="panel">
+        <label>
+          API key
+          <input id="api-key" type="password" placeholder="AIza..." required />
+        </label>
+
+        <label>
+          Channel ID
+          <input id="channel-id" type="text" placeholder="UC..." required />
+        </label>
+
+        <button type="submit">Запустить счётчик</button>
+      </form>
+
+      <section class="stats" aria-live="polite">
+        <article class="stat-card">
+          <h2>Подписчики</h2>
+          <p id="subscribers" class="value">—</p>
+        </article>
+
+        <article class="stat-card">
+          <h2>Просмотры</h2>
+          <p id="views" class="value">—</p>
+        </article>
+
+        <article class="stat-card">
+          <h2>Всего роликов</h2>
+          <p id="videos-count" class="value">—</p>
+        </article>
+      </section>
+
+      <section class="panel videos-panel" aria-live="polite">
+        <h2>Последние ролики</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Название</th>
+              <th>Просмотры</th>
+              <th>Комментарии</th>
+            </tr>
+          </thead>
+          <tbody id="videos-table-body">
+            <tr>
+              <td colspan="3">Нет данных</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <p id="status" class="status">Ожидание запуска…</p>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
