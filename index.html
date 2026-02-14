@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MasterRush: Сервисный Бизнес</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <div class="game-frame">
+        <header class="topbar">
+          <h1>🚘 MasterRush: Сервисный Бизнес</h1>
+          <div class="top-kpis">
+            <div class="kpi"><span>💰</span><strong id="money">0 ₽</strong></div>
+            <div class="kpi"><span>💵</span><strong id="dollars">0 $</strong></div>
+            <div class="kpi"><span>🎚</span><strong id="level">1</strong></div>
+          </div>
+        </header>
+
+        <main>
+          <section id="screenContent" class="screen"></section>
+          <div id="log" class="log hidden-log"></div>
+        </main>
+
+        <nav class="bottom-nav">
+          <button data-tab="home" class="nav-btn active">🏠 Главная</button>
+          <button data-tab="company" class="nav-btn">🏢 Компания</button>
+          <button data-tab="profile" class="nav-btn">👤 Профиль</button>
+          <button data-tab="admin" class="nav-btn">🛠 Админ</button>
+          <button data-tab="corp-rating" class="nav-btn">🏛 Корп</button>
+          <button data-tab="rating" class="nav-btn">🏆 Рейт</button>
+        </nav>
+      </div>
+    </div>
+
+    <script type="module" src="src/main.js"></script>
+  </body>
+</html>
