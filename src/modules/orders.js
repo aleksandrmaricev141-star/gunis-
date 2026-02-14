@@ -42,7 +42,7 @@ function finalizeOrder(order) {
   const tax = order.price * (state.company.inCompany ? 0.04 : 0.08);
 
   const failureRisk = clamp(
-    order.baseRisk - 0.03 * state.personalSkill.quality + 0.01 * (state.toolWear / 100),
+    order.baseRisk - 0.03 * state.personalSkill.quality + 0.01 * (state.toolWear / 100) - (state.globalModifiers.failureRiskReduction || 0),
     0.03,
     0.6,
   );

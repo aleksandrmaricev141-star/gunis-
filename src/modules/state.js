@@ -1,3 +1,6 @@
+
+import { createGlobalMechanicsPool } from './globalMechanics.js';
+
 export const state = {
   money: 700,
   dollars: 25,
@@ -16,6 +19,13 @@ export const state = {
   orders: [],
   activeOrders: [],
   totals: { done: 0, failed: 0, netIncomeTotal: 0 },
+  globalModifiers: {
+    moneyTickBonus: 0,
+    repTickBonus: 0,
+    leadChanceBonus: 0,
+    failureRiskReduction: 0,
+    companyIncomeBonus: 0,
+  },
   company: {
     inCompany: false,
     name: null,
@@ -27,7 +37,18 @@ export const state = {
     hrLevel: 1,
     warehouseLevel: 1,
     passiveIncome: 0,
+    guild: {
+      level: 1,
+      points: 0,
+      treasury: 0,
+      members: 3,
+      questProgress: 0,
+      questGoal: 120,
+      raidCooldown: 0,
+      logisticsRoute: 1,
+    },
   },
+  globalMechanics: createGlobalMechanicsPool(),
 };
 
 export const rankByRep = [

@@ -1,7 +1,7 @@
 import { state } from '../modules/state.js';
 import { format } from '../modules/utils.js';
 import { rejectOrder, takeOrder } from '../modules/orders.js';
-import { createCompany, upgradeCompany } from '../modules/company.js';
+import { createCompany, donateToGuild, startGuildRaid, upgradeCompany, upgradeGuild } from '../modules/company.js';
 import { setChannelBudget } from '../modules/ads.js';
 import { log } from './logger.js';
 
@@ -46,10 +46,8 @@ function renderHome(root) {
     <div class="menu-list">
       <button class="menu-item ghost" data-open="ads">📢 Реклама</button>
       <button class="menu-item ghost" data-open="orders">🧾 Заказы</button>
-      <button class="menu-item ghost" data-open="metrics">📊 Метрики</button>
-      <button class="menu-item ghost" data-open="log">📝 Лог</button>
     </div>
-    <p class="hint">Каждый раздел открывается в отдельном окне.</p>
+    <p class="hint">Метрики и лог убраны из Главной. Они доступны в Профиле/Админе.</p>
   `;
 
   panel.querySelectorAll('[data-open]').forEach((btn) => {
@@ -68,7 +66,7 @@ function openWindow(type) {
 
   const header = document.createElement('div');
   header.className = 'modal-header';
-  header.innerHTML = `<b>${titleByType(type)}</b>`;
+  header.innerHTML = `<b>${type === 'ads' ? '📢 Реклама' : '🧾 Заказы'}</b>`;
 
   const close = document.createElement('button');
   close.textContent = '✖';
@@ -80,22 +78,10 @@ function openWindow(type) {
   body.className = 'modal-body';
   if (type === 'ads') body.appendChild(renderAdsPanel());
   if (type === 'orders') body.appendChild(renderOrdersPanel());
-  if (type === 'metrics') body.appendChild(renderMetricsPanel());
-  if (type === 'log') body.appendChild(renderLogPanel());
 
   modal.append(header, body);
   overlay.appendChild(modal);
   document.querySelector('.game-frame').appendChild(overlay);
-}
-
-function titleByType(type) {
-  const map = {
-    ads: '📢 Реклама',
-    orders: '🧾 Заказы',
-    metrics: '📊 Метрики',
-    log: '📝 Лог',
-  };
-  return map[type] || 'Раздел';
 }
 
 function renderAdsPanel() {
@@ -187,19 +173,15 @@ function fillOrders(root) {
     const item = document.createElement('div');
     item.className = 'item';
     item.innerHTML = `<b>${order.type}</b><small>Цена: ${format(order.price)}₽ · Время: ${order.duration} тиков · Риск: ${Math.round(order.baseRisk * 100)}%</small>`;
-
     const actions = document.createElement('div');
     actions.className = 'actions';
-
     const accept = document.createElement('button');
     accept.textContent = 'Взять';
     accept.onclick = () => takeOrder(order.id);
-
     const reject = document.createElement('button');
     reject.textContent = 'Отказ';
     reject.className = 'secondary';
     reject.onclick = () => rejectOrder(order.id);
-
     actions.append(accept, reject);
     item.appendChild(actions);
     root.appendChild(item);
@@ -222,28 +204,6 @@ function fillActiveOrders(root) {
   });
 }
 
-function renderMetricsPanel() {
-  const panel = document.createElement('section');
-  panel.className = 'panel';
-  panel.innerHTML = `
-    <div class="stats">
-      <div class="stat"><span>Заказов выполнено</span><strong>${format(state.totals.done)}</strong></div>
-      <div class="stat"><span>Провалы</span><strong>${format(state.totals.failed)}</strong></div>
-      <div class="stat"><span>Средний доход</span><strong>${state.totals.done ? `${format(state.totals.netIncomeTotal / state.totals.done)} ₽` : '0 ₽'}</strong></div>
-      <div class="stat"><span>Доход компании/тик</span><strong>${format(state.company.passiveIncome)} ₽</strong></div>
-    </div>
-  `;
-  return panel;
-}
-
-function renderLogPanel() {
-  const panel = document.createElement('section');
-  panel.className = 'panel';
-  panel.innerHTML = '<div id="logMirror" class="log"></div>';
-  panel.querySelector('#logMirror').innerHTML = document.getElementById('log')?.innerHTML || '<div class="log-entry">Лог пуст.</div>';
-  return panel;
-}
-
 function renderCompanyTab(root) {
   const panel = document.createElement('section');
   panel.className = 'panel';
@@ -254,31 +214,41 @@ function renderCompanyTab(root) {
       <p class="hint">Ты пока не в компании. Можешь создать свою за <b>500$</b>.</p>
       <button id="createCompanyBtn">Создать компанию за 500$</button>
     `;
-
     panel.querySelector('#createCompanyBtn').addEventListener('click', () => {
       const result = createCompany('MasterRush Service');
       if (!result.ok) log('❌ Недостаточно долларов для создания компании.', 'bad');
       render();
     });
-
     root.appendChild(panel);
     return;
   }
 
+  const g = state.company.guild;
   panel.innerHTML = `
     <h2>🏢 ${state.company.name}</h2>
     <div class="company">
       <div>Должность: <span class="badge">${state.company.rank}</span></div>
-      <div>Сотрудники: <b>${state.company.members}</b></div>
-      <div>Пассивный доход: <b>${format(state.company.passiveIncome)} ₽/тик</b></div>
+      <div>Сотрудники: <b>${state.company.members}</b> · Пассивный доход: <b>${format(state.company.passiveIncome)} ₽/тик</b></div>
       <div>Реклама ур.: <b>${state.company.adLevel}</b> · Логистика ур.: <b>${state.company.logisticsLevel}</b></div>
       <div>HR ур.: <b>${state.company.hrLevel}</b> · Склад ур.: <b>${state.company.warehouseLevel}</b></div>
     </div>
+
+    <h3>🛡 Гильдия компании</h3>
+    <div class="company">
+      <div>Уровень гильдии: <b>${g.level}</b> · Участники: <b>${g.members}</b></div>
+      <div>Очки: <b>${format(g.points)}</b> · Казна: <b>${format(g.treasury)} ₽</b></div>
+      <div>Квест: <b>${format(g.questProgress)} / ${format(g.questGoal)}</b></div>
+      <div>Рейд CD: <b>${g.raidCooldown}</b> тиков · Лог-маршруты: <b>${g.logisticsRoute}</b></div>
+    </div>
+
     <div class="menu-list">
       <button data-up="adLevel">⬆️ Реклама компании</button>
       <button data-up="logisticsLevel">⬆️ Логистика</button>
       <button data-up="hrLevel">⬆️ Найм (HR)</button>
       <button data-up="warehouseLevel">⬆️ Склад и инструменты</button>
+      <button data-guild="donate">🤝 Донат 200₽ в гильдию</button>
+      <button data-guild="raid">⚔️ Гильдейский рейд</button>
+      <button data-guild="upgrade">🏰 Улучшить гильдию</button>
     </div>
   `;
 
@@ -290,12 +260,31 @@ function renderCompanyTab(root) {
     });
   });
 
+  panel.querySelector('[data-guild="donate"]').addEventListener('click', () => {
+    const r = donateToGuild(200);
+    if (!r.ok) log('⚠️ Нельзя сделать донат в гильдию.', 'warn');
+    render();
+  });
+  panel.querySelector('[data-guild="raid"]').addEventListener('click', () => {
+    const r = startGuildRaid();
+    if (!r.ok) log('⚠️ Рейд недоступен: мало очков или идёт кулдаун.', 'warn');
+    render();
+  });
+  panel.querySelector('[data-guild="upgrade"]').addEventListener('click', () => {
+    const r = upgradeGuild();
+    if (!r.ok) log('⚠️ Недостаточно казны гильдии для апгрейда.', 'warn');
+    render();
+  });
+
   root.appendChild(panel);
 }
 
 function renderProfileTab(root) {
   const panel = document.createElement('section');
   panel.className = 'panel';
+
+  const activeMechanics = state.globalMechanics.filter((m) => m.active).length;
+
   panel.innerHTML = `
     <h2>👤 Профиль и метрики</h2>
     <div class="stats">
@@ -307,17 +296,24 @@ function renderProfileTab(root) {
       <div class="stat"><span>Выполнено заказов</span><strong>${format(state.totals.done)}</strong></div>
       <div class="stat"><span>Провалов</span><strong>${format(state.totals.failed)}</strong></div>
       <div class="stat"><span>Средний доход</span><strong>${state.totals.done ? `${format(state.totals.netIncomeTotal / state.totals.done)} ₽` : '0 ₽'}</strong></div>
+      <div class="stat"><span>Глобальные механики</span><strong>${activeMechanics} / 125</strong></div>
+      <div class="stat"><span>Бонус к деньгам/тик</span><strong>${format(state.globalModifiers.moneyTickBonus)} ₽</strong></div>
     </div>
   `;
+
   root.appendChild(panel);
 }
 
 function renderAdminTab(root) {
   const panel = document.createElement('section');
   panel.className = 'panel';
+
+  const activeMechanics = state.globalMechanics.filter((m) => m.active).length;
+
   panel.innerHTML = `
     <h2>🛠 Админ-панель</h2>
     <p class="hint">Тестовые инструменты для баланса и отладки.</p>
+    <div class="company">Активных глобальных механик: <b>${activeMechanics}/125</b></div>
     <div class="menu-list">
       <button data-admin="money">+ 10 000 ₽</button>
       <button data-admin="dollars">+ 100 $</button>
@@ -325,6 +321,7 @@ function renderAdminTab(root) {
       <button data-admin="rating">Сбросить рейтинг до 5.0</button>
       <button data-admin="wear">Сбросить износ инструмента</button>
       <button data-admin="orders">Очистить очередь заказов</button>
+      <button data-admin="mechanics">Активировать все 125 механик</button>
     </div>
   `;
 
@@ -337,6 +334,7 @@ function renderAdminTab(root) {
       if (action === 'rating') state.rating = 5;
       if (action === 'wear') state.toolWear = 0;
       if (action === 'orders') state.orders = [];
+      if (action === 'mechanics') state.globalMechanics.forEach((m) => { m.active = true; });
 
       log(`🧪 Админ-действие: ${action}`, 'warn');
       render();

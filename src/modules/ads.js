@@ -70,7 +70,8 @@ export function processAdChannelsTick() {
 
     const baseChance = 0.2 + channel.conversion * 0.25;
     const adDepartmentBoost = state.company.inCompany ? (state.company.adLevel - 1) * 0.03 : 0;
-    const spawnChance = clamp((baseChance + adDepartmentBoost) * ownOrdersPenalty, 0.05, 0.9);
+    const globalLeadBonus = state.globalModifiers.leadChanceBonus || 0;
+    const spawnChance = clamp((baseChance + adDepartmentBoost + globalLeadBonus) * ownOrdersPenalty, 0.05, 0.95);
 
     if (Math.random() < spawnChance) {
       spawnLead(channel);
