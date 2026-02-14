@@ -1,15 +1,15 @@
 import { state } from '../modules/state.js';
 import { format } from '../modules/utils.js';
 import { rejectOrder, takeOrder } from '../modules/orders.js';
+import { createCompany, upgradeCompany } from '../modules/company.js';
+import { setChannelBudget } from '../modules/ads.js';
 
 let currentTab = 'home';
-let homeSection = 'overview';
 
 export function initNavigation() {
   document.querySelectorAll('.nav-btn').forEach((button) => {
     button.addEventListener('click', () => {
       currentTab = button.dataset.tab;
-      homeSection = 'overview';
       updateNavState();
       render();
     });
@@ -29,86 +29,77 @@ export function render() {
   const root = document.getElementById('screenContent');
   root.innerHTML = '';
 
-  if (currentTab === 'home') {
-    renderHome(root);
-    return;
-  }
-
-  if (currentTab === 'company') {
-    renderCompanyTab(root);
-    return;
-  }
-
-  if (currentTab === 'profile') {
-    renderProfileTab(root);
-    return;
-  }
-
-  if (currentTab === 'corp-rating') {
-    root.appendChild(makeInDevelopmentPanel('Рейтинг корпораций в разработке'));
-    return;
-  }
-
-  if (currentTab === 'rating') {
-    root.appendChild(makeInDevelopmentPanel('Глобальный рейтинг в разработке'));
-  }
+  if (currentTab === 'home') return renderHome(root);
+  if (currentTab === 'company') return renderCompanyTab(root);
+  if (currentTab === 'profile') return renderProfileTab(root);
+  if (currentTab === 'corp-rating') return root.appendChild(makeInDevelopmentPanel('Рейтинг корпораций в разработке'));
+  if (currentTab === 'rating') return root.appendChild(makeInDevelopmentPanel('Глобальный рейтинг в разработке'));
 }
 
 function renderHome(root) {
-  const menuPanel = document.createElement('section');
-  menuPanel.className = 'panel';
-  menuPanel.innerHTML = `
-    <h2>📂 Главное меню функций</h2>
+  const panel = document.createElement('section');
+  panel.className = 'panel';
+  panel.innerHTML = `
+    <h2>📂 Разделы главного экрана</h2>
     <div class="menu-list">
-      <button class="menu-item ghost" data-home="overview">🏠 Главный экран</button>
-      <button class="menu-item ghost" data-home="ads">📢 Реклама</button>
-      <button class="menu-item ghost" data-home="orders">🧾 Заказы</button>
-      <button class="menu-item ghost" data-home="metrics">📊 Метрики</button>
-      <button class="menu-item ghost" data-home="log">📝 Лог</button>
+      <button class="menu-item ghost" data-open="ads">📢 Реклама</button>
+      <button class="menu-item ghost" data-open="orders">🧾 Заказы</button>
+      <button class="menu-item ghost" data-open="metrics">📊 Метрики</button>
+      <button class="menu-item ghost" data-open="log">📝 Лог</button>
     </div>
+    <p class="hint">Нажатие открывает отдельное окно раздела.</p>
   `;
 
-  menuPanel.querySelectorAll('[data-home]').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      homeSection = btn.dataset.home;
-      render();
-    });
+  panel.querySelectorAll('[data-open]').forEach((btn) => {
+    btn.addEventListener('click', () => openWindow(btn.dataset.open));
   });
 
-  root.appendChild(menuPanel);
+  root.appendChild(panel);
+}
 
-  if (homeSection === 'overview') {
-    const panel = document.createElement('section');
-    panel.className = 'panel';
-    panel.innerHTML = '<h2>Добро пожаловать</h2><p class="hint">Выбери раздел в списке выше: например "Реклама", чтобы открыть все рекламные функции.</p>';
-    root.appendChild(panel);
-    return;
-  }
+function openWindow(type) {
+  const overlay = document.createElement('div');
+  overlay.className = 'overlay';
 
-  if (homeSection === 'ads') {
-    root.appendChild(renderAdsPanel());
-    return;
-  }
+  const modal = document.createElement('div');
+  modal.className = 'modal';
 
-  if (homeSection === 'orders') {
-    root.appendChild(renderOrdersPanel());
-    return;
-  }
+  const header = document.createElement('div');
+  header.className = 'modal-header';
+  header.innerHTML = `<b>${titleByType(type)}</b>`;
 
-  if (homeSection === 'metrics') {
-    root.appendChild(renderMetricsPanel());
-    return;
-  }
+  const close = document.createElement('button');
+  close.textContent = '✖';
+  close.className = 'secondary';
+  close.onclick = () => overlay.remove();
+  header.appendChild(close);
 
-  if (homeSection === 'log') {
-    root.appendChild(renderLogPanel());
-  }
+  const body = document.createElement('div');
+  body.className = 'modal-body';
+  if (type === 'ads') body.appendChild(renderAdsPanel());
+  if (type === 'orders') body.appendChild(renderOrdersPanel());
+  if (type === 'metrics') body.appendChild(renderMetricsPanel());
+  if (type === 'log') body.appendChild(renderLogPanel());
+
+  modal.append(header, body);
+  overlay.appendChild(modal);
+  document.querySelector('.game-frame').appendChild(overlay);
+}
+
+function titleByType(type) {
+  const map = {
+    ads: '📢 Реклама',
+    orders: '🧾 Заказы',
+    metrics: '📊 Метрики',
+    log: '📝 Лог',
+  };
+  return map[type] || 'Раздел';
 }
 
 function renderAdsPanel() {
   const panel = document.createElement('section');
   panel.className = 'panel';
-  panel.innerHTML = '<h2>📢 Реклама</h2><p class="hint">Без рекламы заказов нет. Оплата за каждый полученный лид.</p>';
+  panel.innerHTML = '<p class="hint">Сложная реклама: бюджет канала влияет на цену лида и конверсию.</p>';
 
   const grid = document.createElement('div');
   grid.className = 'grid';
@@ -123,13 +114,25 @@ function renderAdsPanel() {
       return;
     }
 
+    const leadCost = Math.round(channel.costPerLead * (1 + (channel.budget - 1) * 0.24));
     card.innerHTML = `
       <b>${channel.name}</b>
       <p>Запуск: ${format(channel.launchCost)}₽</p>
-      <p>Цена лида: ${format(channel.costPerLead)}₽</p>
+      <p>Цена лида: ${format(leadCost)}₽</p>
       <p>Конверсия: ${Math.round(channel.conversion * 100)}%</p>
-      <p>Фейк-риск: ${Math.round(channel.fakeRisk * 100)}%</p>
+      <p>Бюджет: ${channel.budget}/5</p>
+      <div class="actions">
+        <button class="secondary" data-budget="-1">- бюджет</button>
+        <button class="secondary" data-budget="1">+ бюджет</button>
+      </div>
     `;
+
+    card.querySelectorAll('[data-budget]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        setChannelBudget(channel.id, Number(btn.dataset.budget));
+        render();
+      });
+    });
 
     const button = document.createElement('button');
     if (!channel.active) {
@@ -160,20 +163,10 @@ function renderAdsPanel() {
 function renderOrdersPanel() {
   const panel = document.createElement('section');
   panel.className = 'panel';
-  panel.innerHTML = '<h2>🧾 Заказы</h2>';
 
   const columns = document.createElement('div');
   columns.className = 'two-col';
-  columns.innerHTML = `
-    <div>
-      <h3>Новые заявки</h3>
-      <div id="orderList" class="list"></div>
-    </div>
-    <div>
-      <h3>Активные работы</h3>
-      <div id="activeList" class="list"></div>
-    </div>
-  `;
+  columns.innerHTML = `<div><h3>Новые заявки</h3><div id="orderList" class="list"></div></div><div><h3>Активные работы</h3><div id="activeList" class="list"></div></div>`;
 
   panel.appendChild(columns);
   fillOrders(columns.querySelector('#orderList'));
@@ -187,24 +180,19 @@ function fillOrders(root) {
     root.innerHTML = '<div class="item"><small>Нет заказов. Запусти рекламу.</small></div>';
     return;
   }
-
   state.orders.slice(0, 8).forEach((order) => {
     const item = document.createElement('div');
     item.className = 'item';
     item.innerHTML = `<b>${order.type}</b><small>Цена: ${format(order.price)}₽ · Время: ${order.duration} тиков · Риск: ${Math.round(order.baseRisk * 100)}%</small>`;
-
     const actions = document.createElement('div');
     actions.className = 'actions';
-
     const accept = document.createElement('button');
     accept.textContent = 'Взять';
     accept.onclick = () => takeOrder(order.id);
-
     const reject = document.createElement('button');
     reject.textContent = 'Отказ';
     reject.className = 'secondary';
     reject.onclick = () => rejectOrder(order.id);
-
     actions.append(accept, reject);
     item.appendChild(actions);
     root.appendChild(item);
@@ -217,7 +205,6 @@ function fillActiveOrders(root) {
     root.innerHTML = '<div class="item"><small>Нет активных заказов.</small></div>';
     return;
   }
-
   state.activeOrders.forEach((order) => {
     const progress = Math.round((order.progress / order.duration) * 100);
     const item = document.createElement('div');
@@ -231,12 +218,11 @@ function renderMetricsPanel() {
   const panel = document.createElement('section');
   panel.className = 'panel';
   panel.innerHTML = `
-    <h2>📊 Метрики</h2>
     <div class="stats mini">
       <div class="stat"><span>Заказов выполнено</span><strong>${format(state.totals.done)}</strong></div>
       <div class="stat"><span>Провалы</span><strong>${format(state.totals.failed)}</strong></div>
       <div class="stat"><span>Средний доход</span><strong>${state.totals.done ? `${format(state.totals.netIncomeTotal / state.totals.done)} ₽` : '0 ₽'}</strong></div>
-      <div class="stat"><span>Процент компании</span><strong>${Math.round(state.company.cut * 100)}%</strong></div>
+      <div class="stat"><span>Доход компании/тик</span><strong>${format(state.company.passiveIncome)} ₽</strong></div>
     </div>
   `;
   return panel;
@@ -245,28 +231,54 @@ function renderMetricsPanel() {
 function renderLogPanel() {
   const panel = document.createElement('section');
   panel.className = 'panel';
-  panel.innerHTML = '<h2>📝 Лог</h2><div id="logMirror" class="log"></div>';
-  const mirror = panel.querySelector('#logMirror');
-  const source = document.getElementById('log');
-  mirror.innerHTML = source ? source.innerHTML : '<div class="log-entry">Лог пуст.</div>';
+  panel.innerHTML = '<div id="logMirror" class="log"></div>';
+  panel.querySelector('#logMirror').innerHTML = document.getElementById('log')?.innerHTML || '<div class="log-entry">Лог пуст.</div>';
   return panel;
 }
 
 function renderCompanyTab(root) {
   const panel = document.createElement('section');
   panel.className = 'panel';
-  panel.innerHTML = '<h2>🏢 Компания</h2><div class="company" id="companyInfo"></div>';
 
-  const companyInfo = panel.querySelector('#companyInfo');
   if (!state.company.inCompany) {
-    companyInfo.innerHTML = '<div>Статус: <span class="badge">Одиночка</span></div><div>Открытие компании: репутация 80+</div>';
-  } else {
-    companyInfo.innerHTML = `
-      <div>Компания: <b>${state.company.name}</b></div>
-      <div>Должность: <span class="badge">${state.company.rank}</span></div>
-      <div>Процент компании: <b>${Math.round(state.company.cut * 100)}%</b></div>
+    panel.innerHTML = `
+      <h2>🏢 Компания</h2>
+      <p class="hint">Ты пока не в компании. Можешь создать свою за <b>500$</b>.</p>
+      <button id="createCompanyBtn">Создать компанию за 500$</button>
     `;
+    panel.querySelector('#createCompanyBtn').addEventListener('click', () => {
+      createCompany('MasterRush Service');
+      render();
+    });
+    root.appendChild(panel);
+    return;
   }
+
+  panel.innerHTML = `
+    <h2>🏢 ${state.company.name}</h2>
+    <div class="company">
+      <div>Должность: <span class="badge">${state.company.rank}</span></div>
+      <div>Сотрудники: <b>${state.company.members}</b></div>
+      <div>Пассивный доход: <b>${format(state.company.passiveIncome)} ₽/тик</b></div>
+      <div>Реклама компании ур.: <b>${state.company.adLevel}</b></div>
+      <div>Логистика ур.: <b>${state.company.logisticsLevel}</b></div>
+      <div>HR ур.: <b>${state.company.hrLevel}</b></div>
+      <div>Склад ур.: <b>${state.company.warehouseLevel}</b></div>
+    </div>
+    <div class="menu-list">
+      <button data-up="adLevel">⬆️ Реклама компании</button>
+      <button data-up="logisticsLevel">⬆️ Логистика</button>
+      <button data-up="hrLevel">⬆️ Найм (HR)</button>
+      <button data-up="warehouseLevel">⬆️ Склад и инструменты</button>
+    </div>
+  `;
+
+  panel.querySelectorAll('[data-up]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      upgradeCompany(btn.dataset.up);
+      render();
+    });
+  });
 
   root.appendChild(panel);
 }
@@ -281,6 +293,7 @@ function renderProfileTab(root) {
       <div>Рейтинг: <b>${state.rating.toFixed(2)}</b></div>
       <div>Репутация: <b>${format(state.reputation)}</b></div>
       <div>Износ инструмента: <b>${Math.round(state.toolWear)}%</b></div>
+      <div>Доллары: <b>${format(state.dollars)} $</b></div>
     </div>
   `;
   root.appendChild(panel);
@@ -298,4 +311,7 @@ function renderStats() {
   document.getElementById('rating').textContent = state.rating.toFixed(2);
   document.getElementById('reputation').textContent = format(state.reputation);
   document.getElementById('level').textContent = state.level;
+
+  const dollarsEl = document.getElementById('dollars');
+  if (dollarsEl) dollarsEl.textContent = `${format(state.dollars)} $`;
 }

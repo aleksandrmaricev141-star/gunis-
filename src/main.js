@@ -1,7 +1,7 @@
 import { state } from './modules/state.js';
 import { processAdChannelsTick, maybeUnlockChannels } from './modules/ads.js';
 import { autoRepairTool, processOrdersTick } from './modules/orders.js';
-import { updateCompanyProgress } from './modules/company.js';
+import { processCompanyTick, updateCompanyProgress } from './modules/company.js';
 import { initNavigation, render } from './ui/render.js';
 import { log } from './ui/logger.js';
 
@@ -9,6 +9,7 @@ function gameTick() {
   processAdChannelsTick();
   processOrdersTick();
   autoRepairTool();
+  processCompanyTick();
 
   maybeUnlockChannels();
   updateCompanyProgress();
