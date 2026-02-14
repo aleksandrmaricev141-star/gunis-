@@ -1,4 +1,4 @@
-import { dailyTemplates, guildQuestTemplates, upgrades } from '../config/gameData.js';
+import { dailyTemplates, guildDefaults, guildQuestTemplates, upgrades } from '../config/gameData.js';
 
 export const todayKey = () => new Date().toISOString().slice(0, 10);
 
@@ -29,10 +29,15 @@ export function createGuildQuests(key) {
 }
 
 export function defaultState() {
+  const key = todayKey();
   return {
+    playerId: crypto?.randomUUID?.() || String(Date.now()),
+    playerName: 'Игрок',
+    isAdmin: false,
     energy: 0,
     crystals: 0,
     essence: 0,
+    xp: 0,
     totalEarned: 0,
     totalUpgrades: 0,
     clicks: 0,
@@ -42,16 +47,18 @@ export function defaultState() {
     artifacts: [],
     completedChapters: [],
     achievementClaimed: [],
-    dailyKey: todayKey(),
-    dailyTasks: createDailyTasks(todayKey()),
+    dailyKey: key,
+    dailyTasks: createDailyTasks(key),
     activeEffects: {},
     abilityCooldowns: {},
     expeditionRuns: {},
     currentEvent: { index: 0, startedAt: Date.now() },
     lastRating: 0,
     activeGuild: null,
-    guildXp: 0,
-    guildQuestKey: todayKey(),
-    guildQuests: createGuildQuests(todayKey())
+    guildQuestKey: key,
+    guildQuests: createGuildQuests(key),
+    guilds: guildDefaults,
+    leaderboardPlayers: [],
+    leaderboardGuilds: []
   };
 }

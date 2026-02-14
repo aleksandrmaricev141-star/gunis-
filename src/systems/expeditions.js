@@ -9,7 +9,7 @@ export function renderExpeditions(state, refresh) {
     const li = document.createElement('li');
     li.className = 'item';
     const run = state.expeditionRuns[exp.id];
-    li.innerHTML = `<strong>${exp.name}</strong><br><span class="hint">${exp.duration}с | Награда ${exp.rewardEnergy}⚡ и ${exp.rewardCrystals}💎</span>`;
+    li.innerHTML = `<strong>${exp.name}</strong><br><span class="hint">${exp.duration}с | Награда ${exp.rewardEnergy}⚡ ${exp.rewardCrystals}💎 ${exp.rewardXp}XP</span>`;
 
     const btn = document.createElement('button');
     btn.className = 'btn';
@@ -29,6 +29,7 @@ export function renderExpeditions(state, refresh) {
         state.energy += exp.rewardEnergy;
         state.totalEarned += exp.rewardEnergy;
         state.crystals += exp.rewardCrystals;
+        state.xp += exp.rewardXp;
         delete state.expeditionRuns[exp.id];
         refresh();
       };

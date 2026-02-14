@@ -1,4 +1,24 @@
 import { storyChapters } from '../config/gameData.js';
+import { levelFromXp, rating } from '../core/economy.js';
+
+function taskDone(state, task) {
+  const totalUpgrades = Object.values(state.upgradeLevels).reduce((a, b) => a + b, 0);
+  const guild = state.guilds.find((g) => g.id === state.activeGuild);
+  const guildLevel = guild?.level || 0;
+
+  switch (task.type) {
+    case 'clicks': return state.clicks >= task.target;
+    case 'energy': return state.energy >= task.target;
+    case 'upgrades': return totalUpgrades >= task.target;
+    case 'totalEarned': return state.totalEarned >= task.target;
+    case 'level': return levelFromXp(state.xp) >= task.target;
+    case 'crystals': return state.crystals >= task.target;
+    case 'rating': return rating(state) >= task.target;
+    case 'skins': return state.unlockedSkins.length >= task.target;
+    case 'guildLevel': return guildLevel >= task.target;
+    default: return false;
+  }
+}
 
 export function renderStory(state, refresh) {
   const wrap = document.getElementById('storyList');
@@ -11,10 +31,13 @@ export function renderStory(state, refresh) {
     const div = document.createElement('div');
     div.className = 'item';
 
-    const tasks = chapter.tasks.map((t) => `<li class="${t.done(state) ? 'done' : ''}">${t.text} ${t.done(state) ? '✓' : ''}</li>`).join('');
+    const tasks = chapter.tasks
+      .map((t) => `<li class="${taskDone(state, t) ? 'done' : ''}">${t.text} ${taskDone(state, t) ? '✓' : ''}</li>`)
+      .join('');
+
     div.innerHTML = `<strong>${chapter.title}</strong><ul>${tasks}</ul><p class="hint">Артефакт: ${chapter.artifact.name} (${chapter.artifact.desc})</p>`;
 
-    if (!done && chapter.tasks.every((t) => t.done(state))) {
+    if (!done && chapter.tasks.every((t) => taskDone(state, t))) {
       const btn = document.createElement('button');
       btn.className = 'btn';
       btn.textContent = 'Забрать артефакт';
@@ -37,10 +60,7 @@ export function renderStory(state, refresh) {
   });
 
   if (!state.artifacts.length) {
-    const li = document.createElement('li');
-    li.className = 'hint';
-    li.textContent = 'Нет артефактов';
-    art.appendChild(li);
+    art.innerHTML = '<li class="hint">Нет артефактов</li>';
   } else {
     state.artifacts.forEach((a) => {
       const li = document.createElement('li');

@@ -10,117 +10,141 @@
 <body>
   <div class="app-frame">
     <header class="topbar">
-      <h1>⚡ Neon Syndicate</h1>
-      <p id="tgUserLabel">Гость лаборатории</p>
+      <h1>✨ Neon Syndicate</h1>
+      <p id="tgUserLabel">Гость</p>
     </header>
-
-    <nav class="tabs" id="tabMenu">
-      <button class="tab-btn active" data-tab="core">Ядро</button>
-      <button class="tab-btn" data-tab="progress">Прогресс</button>
-      <button class="tab-btn" data-tab="missions">Миссии</button>
-      <button class="tab-btn" data-tab="advanced">Продвинутое</button>
-      <button class="tab-btn" data-tab="guild">Гильдия</button>
-    </nav>
 
     <main class="tab-content">
       <section class="tab-panel active" data-panel="core">
-        <section class="card">
+        <section class="card soft">
           <h2>Ядро</h2>
           <div class="stats">
             <p>Энергия: <strong id="energy">0</strong></p>
             <p>Кристаллы: <strong id="crystals">0</strong></p>
-            <p>Эссенция: <strong id="essence">0</strong></p>
+            <p>Уровень: <strong id="playerLevel">1</strong> (<span id="playerXp">0</span> XP)</p>
             <p>За клик: <strong id="perClick">1</strong></p>
             <p>Пассив/сек: <strong id="passive">0</strong></p>
           </div>
           <button id="tapButton" class="btn primary">⚗️ Генерировать</button>
-          <button id="tradeButton" class="btn">Обменять 250 энергии → 15 кристаллов</button>
         </section>
 
-        <section class="card">
-          <h2>Улучшения</h2>
+        <section class="card soft">
+          <h3>Улучшения</h3>
           <ul id="upgradesList"></ul>
         </section>
-      </section>
 
-      <section class="tab-panel" data-panel="progress">
-        <section class="card">
-          <h2>Скины</h2>
-          <ul id="skinsList"></ul>
-        </section>
-        <section class="card">
-          <h2>Рейтинг</h2>
-          <p>Ваш score: <strong id="ratingScore">0</strong></p>
-          <ol id="ratingBoard"></ol>
-        </section>
-        <section class="card">
-          <h2>Достижения</h2>
-          <ul id="achievementsList"></ul>
+        <section class="card soft">
+          <h3>Событие и способности</h3>
+          <p id="eventName"></p>
+          <p class="hint" id="eventDesc"></p>
+          <p class="hint" id="eventTimer"></p>
+          <ul id="abilitiesList"></ul>
         </section>
       </section>
 
-      <section class="tab-panel" data-panel="missions">
-        <section class="card">
-          <h2>Ежедневные задания</h2>
+      <section class="tab-panel" data-panel="profile">
+        <section class="card soft">
+          <h2>Профиль</h2>
+          <p id="profileSummary"></p>
+          <p class="hint" id="prestigeHint"></p>
+          <button id="prestigeButton" class="btn warn">♻️ Перерождение</button>
+        </section>
+
+        <section class="card soft">
+          <h3>Ежедневные задания</h3>
           <p class="hint" id="dailyReset"></p>
           <ul id="dailyList"></ul>
         </section>
 
-        <section class="card">
-          <h2>Сюжетные главы и артефакты</h2>
+        <section class="card soft">
+          <h3>Сюжетные главы</h3>
           <div id="storyList"></div>
-          <h3>Артефакты</h3>
+          <h4>Артефакты</h4>
           <ul id="artifactList"></ul>
         </section>
 
-        <section class="card">
-          <h2>Экспедиции</h2>
+        <section class="card soft">
+          <h3>Достижения и экспедиции</h3>
+          <ul id="achievementsList"></ul>
+          <hr />
           <ul id="expeditionsList"></ul>
         </section>
-      </section>
 
-      <section class="tab-panel" data-panel="advanced">
-        <section class="card">
-          <h2>Активные способности</h2>
-          <ul id="abilitiesList"></ul>
-        </section>
-
-        <section class="card">
-          <h2>Динамические события</h2>
-          <p id="eventName"></p>
-          <p class="hint" id="eventDesc"></p>
-          <p class="hint" id="eventTimer"></p>
-        </section>
-
-        <section class="card">
-          <h2>Перерождение</h2>
-          <button id="prestigeButton" class="btn warn">♻️ Перерождение</button>
-          <p class="hint" id="prestigeHint"></p>
+        <section class="card soft admin-panel" id="adminPanel">
+          <h3>Админ-панель</h3>
+          <p class="hint">Только для тестов локально.</p>
+          <div class="row">
+            <input id="adminCode" placeholder="Код админа" />
+            <button id="adminLogin" class="btn">Войти</button>
+          </div>
+          <div id="adminControls" class="hidden">
+            <button id="addEnergyBtn" class="btn">+1000 энергии</button>
+            <button id="addCrystalsBtn" class="btn">+200 кристаллов</button>
+            <button id="clearRatingsBtn" class="btn danger">Очистить рейтинги</button>
+          </div>
         </section>
       </section>
 
       <section class="tab-panel" data-panel="guild">
-        <section class="card">
-          <h2>Гильдии</h2>
+        <section class="card soft">
+          <h2>Гильдия</h2>
           <p id="guildStatus" class="hint"></p>
+          <div class="row">
+            <input id="newGuildName" placeholder="Название новой гильдии" />
+            <button id="createGuildBtn" class="btn">Создать (150💎)</button>
+          </div>
           <ul id="guildList"></ul>
         </section>
 
-        <section class="card">
-          <h2>Квесты гильдии</h2>
+        <section class="card soft">
+          <h3>Механики гильдии</h3>
+          <p class="hint">Казна и уровень гильдии усиливают всех участников.</p>
+          <button id="donateGuildBtn" class="btn">Пожертвовать 300⚡ в казну</button>
+          <button id="buyGuildBuffBtn" class="btn">Купить бафф гильдии (200 казны)</button>
           <ul id="guildQuestsList"></ul>
         </section>
+      </section>
 
-        <section class="card">
-          <h2>Рейтинг гильдий</h2>
+      <section class="tab-panel" data-panel="rating">
+        <section class="card soft">
+          <h2>Рейтинг игроков (реальный)</h2>
+          <p>Ваш score: <strong id="ratingScore">0</strong></p>
+          <ol id="ratingBoard"></ol>
+        </section>
+
+        <section class="card soft">
+          <h2>Рейтинг гильдий (реальный)</h2>
           <ol id="guildBoard"></ol>
+        </section>
+      </section>
+
+      <section class="tab-panel" data-panel="shop">
+        <section class="card soft">
+          <h2>Магазин</h2>
+          <ul id="skinsList"></ul>
+          <button id="tradeButton" class="btn">Обменять 250⚡ → 15💎</button>
+        </section>
+
+        <section class="card soft">
+          <h3>Покупка кристаллов (реальные деньги)</h3>
+          <p class="hint">Пока не подключено. Подготовлен интерфейс для будущего Telegram Payments.</p>
+          <ul>
+            <li>Набор S — 100💎</li>
+            <li>Набор M — 550💎</li>
+            <li>Набор L — 1200💎</li>
+          </ul>
+          <button class="btn" disabled>Скоро будет доступно</button>
         </section>
       </section>
     </main>
 
-    <footer>
-      <button id="resetButton" class="btn danger">Сброс прогресса</button>
-    </footer>
+    <nav class="bottom-menu" id="tabMenu">
+      <button class="tab-btn active" data-tab="core">Ядро</button>
+      <button class="tab-btn" data-tab="profile">Профиль</button>
+      <button class="tab-btn" data-tab="guild">Гильдия</button>
+      <button class="tab-btn" data-tab="rating">Рейтинг</button>
+      <button class="tab-btn" data-tab="shop">Магазин</button>
+    </nav>
   </div>
 
   <script type="module" src="src/main.js"></script>

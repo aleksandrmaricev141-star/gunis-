@@ -1,4 +1,4 @@
-export const STORAGE_KEY = 'neon-syndicate-v3';
+export const STORAGE_KEY = 'neon-syndicate-v4';
 
 export const upgrades = [
   { id: 'core', name: 'Квантовое ядро', baseCost: 25, click: 1, passive: 0 },
@@ -16,20 +16,36 @@ export const storyChapters = [
   {
     id: 'ch1',
     title: 'Глава 1: Пробуждение станции',
+    artifact: { name: 'Ядро Инициации', desc: '+1 за клик', clickBonus: 1, passiveBonus: 0 },
     tasks: [
-      { text: 'Накопи 300 энергии', done: (s) => s.energy >= 300 },
-      { text: 'Купи 3 уровня улучшений', done: (s) => Object.values(s.upgradeLevels).reduce((a, b) => a + b, 0) >= 3 }
-    ],
-    artifact: { name: 'Ядро Инициации', desc: '+1 за клик', clickBonus: 1, passiveBonus: 0 }
+      { text: 'Сделай 20 кликов', type: 'clicks', target: 20 },
+      { text: 'Накопи 300 энергии', type: 'energy', target: 300 },
+      { text: 'Купи 2 улучшения', type: 'upgrades', target: 2 },
+      { text: 'Заработай 500 энергии суммарно', type: 'totalEarned', target: 500 },
+      { text: 'Достигни 2 уровня персонажа', type: 'level', target: 2 },
+      { text: 'Сделай 80 кликов', type: 'clicks', target: 80 },
+      { text: 'Накопи 800 энергии', type: 'energy', target: 800 },
+      { text: 'Купи 5 улучшений', type: 'upgrades', target: 5 },
+      { text: 'Получи 60 кристаллов', type: 'crystals', target: 60 },
+      { text: 'Достигни рейтинга 1200', type: 'rating', target: 1200 }
+    ]
   },
   {
     id: 'ch2',
     title: 'Глава 2: Тёмный протокол',
+    artifact: { name: 'Сфера Резонанса', desc: '+3 пассив/сек', clickBonus: 0, passiveBonus: 3 },
     tasks: [
-      { text: 'Разблокируй скин Cyber Nomad', done: (s) => s.unlockedSkins.includes('cyber') },
-      { text: 'Достигни 1500 рейтинга', done: (s) => s.lastRating >= 1500 }
-    ],
-    artifact: { name: 'Сфера Резонанса', desc: '+3 пассив/сек', clickBonus: 0, passiveBonus: 3 }
+      { text: 'Сделай 150 кликов', type: 'clicks', target: 150 },
+      { text: 'Накопи 1800 энергии', type: 'energy', target: 1800 },
+      { text: 'Купи 10 улучшений', type: 'upgrades', target: 10 },
+      { text: 'Разблокируй 1 скин', type: 'skins', target: 2 },
+      { text: 'Заработай 3000 энергии суммарно', type: 'totalEarned', target: 3000 },
+      { text: 'Достигни 4 уровня персонажа', type: 'level', target: 4 },
+      { text: 'Сделай 300 кликов', type: 'clicks', target: 300 },
+      { text: 'Получи 150 кристаллов', type: 'crystals', target: 150 },
+      { text: 'Прокачай гильдию до 2 уровня', type: 'guildLevel', target: 2 },
+      { text: 'Достигни рейтинга 4500', type: 'rating', target: 4500 }
+    ]
   }
 ];
 
@@ -57,17 +73,18 @@ export const events = [
 ];
 
 export const expeditions = [
-  { id: 'short', name: 'Короткий рейд', duration: 45, rewardEnergy: 180, rewardCrystals: 8 },
-  { id: 'deep', name: 'Глубокая вылазка', duration: 120, rewardEnergy: 700, rewardCrystals: 30 }
+  { id: 'short', name: 'Короткий рейд', duration: 45, rewardEnergy: 180, rewardCrystals: 8, rewardXp: 25 },
+  { id: 'deep', name: 'Глубокая вылазка', duration: 120, rewardEnergy: 700, rewardCrystals: 30, rewardXp: 80 }
 ];
 
-export const guilds = [
-  { id: 'forge', name: 'Iron Forge', bonusClick: 1, bonusPassive: 0 },
-  { id: 'pulse', name: 'Pulse Order', bonusClick: 0, bonusPassive: 2 },
-  { id: 'veil', name: 'Shadow Veil', bonusClick: 1, bonusPassive: 1 }
+export const guildDefaults = [
+  { id: 'forge', name: 'Iron Forge', level: 1, treasury: 0, bonusClick: 1, bonusPassive: 0, members: 0, xp: 0 },
+  { id: 'pulse', name: 'Pulse Order', level: 1, treasury: 0, bonusClick: 0, bonusPassive: 2, members: 0, xp: 0 }
 ];
 
 export const guildQuestTemplates = [
   { id: 'gq_clicks', text: 'Вклад: 60 кликов', target: 60, type: 'clicks', rewardGuildXp: 120, rewardCrystals: 12 },
   { id: 'gq_earn', text: 'Вклад: 1200 энергии', target: 1200, type: 'earn', rewardGuildXp: 180, rewardCrystals: 15 }
 ];
+
+export const ADMIN_CODE = '7777';
