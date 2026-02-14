@@ -1,0 +1,11 @@
+{
+  "name": "youtube-live-counter-tg",
+  "version": "1.0.0",
+  "private": true,
+  "description": "YouTube channel live counter with Telegram bot notifications",
+  "type": "commonjs",
+  "scripts": {
+    "check": "node --check app.js && node --check bot.js",
+    "start:bot": "node bot.js"
+  }
+}
