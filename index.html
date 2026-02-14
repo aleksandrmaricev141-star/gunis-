@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Neon Syndicate: Telegram Mini App</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <h1>⚡ Neon Syndicate</h1>
+    <p id="tgUserLabel">Гость лаборатории</p>
+  </header>
+
+  <main class="grid">
+    <section class="card">
+      <h2>Ядро</h2>
+      <div class="stats">
+        <p>Энергия: <strong id="energy">0</strong></p>
+        <p>Кристаллы: <strong id="crystals">0</strong></p>
+        <p>Эссенция: <strong id="essence">0</strong></p>
+        <p>За клик: <strong id="perClick">1</strong></p>
+        <p>Пассив/сек: <strong id="passive">0</strong></p>
+      </div>
+      <button id="tapButton" class="btn primary">⚗️ Генерировать</button>
+      <button id="prestigeButton" class="btn warn">♻️ Перерождение</button>
+      <p class="hint" id="prestigeHint"></p>
+    </section>
+
+    <section class="card">
+      <h2>Улучшения</h2>
+      <ul id="upgradesList"></ul>
+    </section>
+
+    <section class="card">
+      <h2>Скины</h2>
+      <ul id="skinsList"></ul>
+    </section>
+
+    <section class="card">
+      <h2>Рейтинг</h2>
+      <p>Ваш score: <strong id="ratingScore">0</strong></p>
+      <ol id="ratingBoard"></ol>
+    </section>
+
+    <section class="card">
+      <h2>Ежедневные задания</h2>
+      <p class="hint" id="dailyReset"></p>
+      <ul id="dailyList"></ul>
+    </section>
+
+    <section class="card wide">
+      <h2>Сюжетные главы и артефакты</h2>
+      <div id="storyList"></div>
+      <h3>Артефакты</h3>
+      <ul id="artifactList"></ul>
+    </section>
+
+    <section class="card">
+      <h2>Новая механика #1: Достижения</h2>
+      <ul id="achievementsList"></ul>
+    </section>
+
+    <section class="card">
+      <h2>Новая механика #2: Активные способности</h2>
+      <ul id="abilitiesList"></ul>
+    </section>
+
+    <section class="card">
+      <h2>Новая механика #3: Динамические события</h2>
+      <p id="eventName"></p>
+      <p class="hint" id="eventDesc"></p>
+      <p class="hint" id="eventTimer"></p>
+    </section>
+
+    <section class="card">
+      <h2>Новая механика #4: Экспедиции</h2>
+      <ul id="expeditionsList"></ul>
+    </section>
+
+    <section class="card">
+      <h2>Новая механика #5: Торговец</h2>
+      <p class="hint">Обменивай энергию на кристаллы для скинов/ускорений.</p>
+      <button id="tradeButton" class="btn">Обменять 250 энергии → 15 кристаллов</button>
+    </section>
+  </main>
+
+  <footer>
+    <button id="resetButton" class="btn danger">Сброс прогресса</button>
+  </footer>
+
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>
