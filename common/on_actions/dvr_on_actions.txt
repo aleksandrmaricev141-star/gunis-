@@ -1,6 +1,6 @@
 on_startup = {
 	effect = {
-		YUG = {
+		ALB = {
 			country_event = { id = dvr.1 }
 		}
 	}

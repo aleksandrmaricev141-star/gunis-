@@ -6,18 +6,22 @@ country_event = {
 	is_triggered_only = yes
 
 	trigger = {
-		tag = YUG
-		has_full_control_of_state = 106
+		tag = ALB
+		has_full_control_of_state = 44
 	}
 
 	immediate = {
-		106 = {
+		44 = {
 			add_core_of = DVR
 		}
 		release = DVR
 		DVR = {
-			set_capital = 106
+			set_capital = 44
 			country_event = { id = dvr.2 }
+			annex_country = {
+				target = ALB
+				transfer_troops = no
+			}
 		}
 	}
 }
