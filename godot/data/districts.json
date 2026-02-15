@@ -1,0 +1,34 @@
+{
+  "border": [
+    [35.00, 53.25], [35.20, 53.45], [35.55, 53.55], [36.05, 53.52], [36.45, 53.45], [36.95, 53.38], [37.35, 53.22], [37.75, 53.02], [37.88, 52.75], [37.80, 52.48], [37.58, 52.18], [37.22, 52.02], [36.85, 51.98], [36.45, 52.00], [36.00, 52.05], [35.60, 52.08], [35.25, 52.22], [35.00, 52.45], [34.95, 52.75], [35.00, 53.00]
+  ],
+  "districts": [
+    {"id":"orel_city","name":"Орёл","type":"Город","lat":52.97,"lon":36.07,"POP":310,"INF":72,"ECO":74,"LOY":56,"SERV":63,"RISK":37,"LOG":1.2},
+    {"id":"livny_city","name":"Ливны","type":"Город","lat":52.43,"lon":37.60,"POP":47,"INF":58,"ECO":55,"LOY":52,"SERV":54,"RISK":42,"LOG":1.05},
+    {"id":"mtsensk_city","name":"Мценск","type":"Город","lat":53.28,"lon":36.57,"POP":37,"INF":60,"ECO":57,"LOY":50,"SERV":51,"RISK":40,"LOG":1.08},
+    {"id":"bolkhov","name":"Болховский","type":"Район","lat":53.44,"lon":36.00,"POP":22,"INF":46,"ECO":43,"LOY":51,"SERV":45,"RISK":47,"LOG":0.93},
+    {"id":"verkhovsky","name":"Верховский","type":"Район","lat":52.81,"lon":37.24,"POP":17,"INF":43,"ECO":40,"LOY":47,"SERV":43,"RISK":52,"LOG":0.88},
+    {"id":"glazunovsky","name":"Глазуновский","type":"Район","lat":52.50,"lon":36.33,"POP":16,"INF":44,"ECO":42,"LOY":49,"SERV":45,"RISK":48,"LOG":0.92},
+    {"id":"dmitrovsky","name":"Дмитровский","type":"Район","lat":52.50,"lon":35.15,"POP":15,"INF":44,"ECO":42,"LOY":49,"SERV":46,"RISK":48,"LOG":0.91},
+    {"id":"dolzhansky","name":"Должанский","type":"Район","lat":52.06,"lon":37.33,"POP":13,"INF":41,"ECO":39,"LOY":46,"SERV":42,"RISK":53,"LOG":0.86},
+    {"id":"zalegoshchensky","name":"Залегощенский","type":"Район","lat":52.90,"lon":36.89,"POP":14,"INF":45,"ECO":43,"LOY":50,"SERV":46,"RISK":47,"LOG":0.95},
+    {"id":"znamensky","name":"Знаменский","type":"Район","lat":52.88,"lon":35.90,"POP":10,"INF":40,"ECO":38,"LOY":48,"SERV":42,"RISK":52,"LOG":0.87},
+    {"id":"kolpnyansky","name":"Колпнянский","type":"Район","lat":52.23,"lon":37.04,"POP":12,"INF":41,"ECO":40,"LOY":47,"SERV":43,"RISK":51,"LOG":0.88},
+    {"id":"korsakovsky","name":"Корсаковский","type":"Район","lat":52.83,"lon":37.72,"POP":9,"INF":39,"ECO":37,"LOY":46,"SERV":41,"RISK":54,"LOG":0.84},
+    {"id":"krasnozorensky","name":"Краснозоренский","type":"Район","lat":52.77,"lon":37.67,"POP":9,"INF":39,"ECO":38,"LOY":46,"SERV":41,"RISK":53,"LOG":0.84},
+    {"id":"kromskoy","name":"Кромской","type":"Район","lat":52.69,"lon":35.77,"POP":16,"INF":45,"ECO":44,"LOY":51,"SERV":47,"RISK":45,"LOG":0.99},
+    {"id":"livensky","name":"Ливенский","type":"Район","lat":52.48,"lon":37.55,"POP":24,"INF":50,"ECO":47,"LOY":52,"SERV":49,"RISK":44,"LOG":1.01},
+    {"id":"maloarkhangelsky","name":"Малоархангельский","type":"Район","lat":52.40,"lon":36.50,"POP":11,"INF":40,"ECO":39,"LOY":48,"SERV":43,"RISK":51,"LOG":0.89},
+    {"id":"mtsensky","name":"Мценский","type":"Район","lat":53.20,"lon":36.45,"POP":25,"INF":52,"ECO":50,"LOY":53,"SERV":50,"RISK":43,"LOG":1.03},
+    {"id":"novoderevenkovsky","name":"Новодеревеньковский","type":"Район","lat":52.79,"lon":37.65,"POP":16,"INF":42,"ECO":41,"LOY":48,"SERV":44,"RISK":50,"LOG":0.90},
+    {"id":"novosilsky","name":"Новосильский","type":"Район","lat":52.97,"lon":37.04,"POP":10,"INF":40,"ECO":39,"LOY":47,"SERV":42,"RISK":52,"LOG":0.87},
+    {"id":"orlovsky","name":"Орловский","type":"Район","lat":52.94,"lon":36.20,"POP":42,"INF":58,"ECO":57,"LOY":54,"SERV":55,"RISK":41,"LOG":1.08},
+    {"id":"pokrovsky","name":"Покровский","type":"Район","lat":52.61,"lon":36.98,"POP":20,"INF":47,"ECO":45,"LOY":52,"SERV":47,"RISK":45,"LOG":0.98},
+    {"id":"sverdlovsky","name":"Свердловский","type":"Район","lat":52.67,"lon":36.42,"POP":19,"INF":45,"ECO":44,"LOY":50,"SERV":46,"RISK":46,"LOG":0.95},
+    {"id":"soskovsky","name":"Сосковский","type":"Район","lat":53.36,"lon":35.38,"POP":8,"INF":38,"ECO":36,"LOY":45,"SERV":40,"RISK":55,"LOG":0.82},
+    {"id":"trosnyansky","name":"Троснянский","type":"Район","lat":52.53,"lon":35.82,"POP":11,"INF":41,"ECO":39,"LOY":47,"SERV":42,"RISK":52,"LOG":0.86},
+    {"id":"uritsky","name":"Урицкий","type":"Район","lat":52.97,"lon":35.73,"POP":17,"INF":44,"ECO":43,"LOY":49,"SERV":45,"RISK":48,"LOG":0.92},
+    {"id":"khotynetsky","name":"Хотынецкий","type":"Район","lat":53.13,"lon":35.39,"POP":10,"INF":40,"ECO":38,"LOY":47,"SERV":42,"RISK":52,"LOG":0.85},
+    {"id":"shablykinsky","name":"Шаблыкинский","type":"Район","lat":52.86,"lon":35.20,"POP":9,"INF":39,"ECO":37,"LOY":46,"SERV":41,"RISK":54,"LOG":0.84}
+  ]
+}
