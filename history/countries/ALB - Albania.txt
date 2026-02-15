@@ -19,5 +19,5 @@ create_country_leader = {
 	desc = "POLITICS_OLEG_PERUNOVICH_DESC"
 	picture = "gfx/leaders/GER/Portrait_Germany_Adolf_Hitler.dds"
 	expire = "1938.1.1"
-	ideology = despotism
+	ideology = pagan_militarism
 }

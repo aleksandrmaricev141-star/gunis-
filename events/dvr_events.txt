@@ -17,7 +17,7 @@ country_event = {
 			name = "Александр Великий Маричев"
 			desc = "POLITICS_ALEXANDER_MARICHEV_DESC"
 			picture = "gfx/leaders/SOV/Portrait_Soviet_Union_Stalin.dds"
-			ideology = despotism
+			ideology = pagan_militarism
 		}
 	}
 }
