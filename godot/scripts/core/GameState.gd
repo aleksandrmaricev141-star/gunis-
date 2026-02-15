@@ -2,26 +2,42 @@ extends RefCounted
 class_name GameState
 
 var month: int = 1
-var year: int = 1
+var year: int = 2020
 var rank: String = "Глава района"
 var map_mode: String = "LOY"
+var is_paused: bool = false
 
 var resources: Dictionary = {"BUD":1200.0, "POL":120.0, "CAD":24.0, "EXP":35.0, "MED":28.0, "debt":180.0}
 var districts: Array[Dictionary] = []
 var selected_id: String = ""
+var player_district_id: String = ""
+var district_colors: Dictionary = {}
 var career_score: float = 52.0
 var support_score: float = 54.0
 var logs: Array[String] = []
 
 func setup(district_data: Array) -> void:
 	districts.clear()
+	district_colors.clear()
 	for d in district_data:
 		var copy: Dictionary = (d as Dictionary).duplicate(true)
 		copy["budget"] = {"infra":35, "social":10, "business":10, "apk":15, "housing":20, "reserve":10}
 		districts.append(copy)
+		var id: String = String(copy["id"])
+		district_colors[id] = _generate_color(id)
 	selected_id = String(districts[0]["id"])
-	logs = ["[Г1 М1] Godot-only версия инициализирована."]
+	player_district_id = selected_id
+	month = 1
+	year = 2020
+	rank = "Глава района"
+	is_paused = false
+	logs = ["[2020/01] Игра инициализирована. Выберите район и нажмите Старт."]
 	_recompute_scores()
+
+func _generate_color(id: String) -> Color:
+	var h: int = id.hash()
+	var hue: float = fmod(float(abs(h % 360)), 360.0) / 360.0
+	return Color.from_hsv(hue, 0.45, 0.88, 1.0)
 
 func selected_district() -> Dictionary:
 	for d in districts:
@@ -29,8 +45,30 @@ func selected_district() -> Dictionary:
 			return d
 	return districts[0]
 
+func player_district() -> Dictionary:
+	for d in districts:
+		if String(d["id"]) == player_district_id:
+			return d
+	return districts[0]
+
 func set_selected_by_id(id: String) -> void:
 	selected_id = id
+
+func set_player_district(id: String) -> void:
+	player_district_id = id
+	selected_id = id
+	add_log("Выбран стартовый район: %s" % district_name(id))
+
+func district_name(id: String) -> String:
+	for d in districts:
+		if String(d["id"]) == id:
+			return String(d["name"])
+	return id
+
+func toggle_pause() -> bool:
+	is_paused = not is_paused
+	add_log("Пауза: %s" % ("включена" if is_paused else "снята"))
+	return is_paused
 
 func avg(key: String) -> float:
 	var s: float = 0.0
@@ -66,11 +104,15 @@ func _recompute_scores() -> void:
 		rank = "Глава района"
 
 func add_log(message: String) -> void:
-	logs.append("[Г%s М%s] %s" % [year, month, message])
+	logs.append("[%d/%02d] %s" % [year, month, message])
 	if logs.size() > 120:
 		logs = logs.slice(logs.size() - 120, logs.size())
 
 func process_month() -> void:
+	if is_paused:
+		add_log("Ход пропущен: игра на паузе")
+		return
+
 	for d in districts:
 		var b: Dictionary = d["budget"]
 		var inf_next: float = float(d["INF"]) + 0.6 * (1.0 + (float(d["LOG"]) - 1.0)) * (float(b["infra"]) / 35.0) - clamp(0.35 - float(b["housing"]) / 100.0, 0.1, 0.35)

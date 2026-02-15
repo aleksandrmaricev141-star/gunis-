@@ -10,17 +10,19 @@ var selected_id: String = ""
 var hovered_id: String = ""
 var map_mode: String = "LOY"
 var map_rect: Rect2 = Rect2(0, 0, 960, 780)
+var district_colors: Dictionary = {}
 
 var map_texture: Texture2D
 var projected_points: Dictionary = {}
 var district_cells: Dictionary = {}
 var border_projected: Array[Vector2] = []
 
-func configure(border: Array, district_items: Array, selected: String, mode: String) -> void:
+func configure(border: Array, district_items: Array, selected: String, mode: String, color_map: Dictionary) -> void:
 	border_points = border
 	districts = district_items
 	selected_id = selected
 	map_mode = mode
+	district_colors = color_map
 	_rebuild_geometry()
 	queue_redraw()
 
@@ -117,15 +119,15 @@ func _draw_cells_overlay() -> void:
 		if poly.size() < 3:
 			continue
 		var packed: PackedVector2Array = PackedVector2Array(poly)
-		var value: float = float(d[map_mode])
-		var base: Color = _value_color(value)
+		var base: Color = district_colors.get(id, _value_color(float(d[map_mode]))) as Color
 		if id == hovered_id:
-			draw_colored_polygon(packed, Color(base.r, base.g, base.b, 0.25))
+			draw_colored_polygon(packed, Color(base.r, base.g, base.b, 0.32))
 			draw_polyline(packed, Color(1, 0.95, 0.25, 0.95), 3.0, true)
 		elif id == selected_id:
-			draw_colored_polygon(packed, Color(base.r, base.g, base.b, 0.18))
+			draw_colored_polygon(packed, Color(base.r, base.g, base.b, 0.22))
 			draw_polyline(packed, Color(0.9, 1.0, 1.0, 0.95), 2.0, true)
 		else:
+			draw_colored_polygon(packed, Color(base.r, base.g, base.b, 0.10))
 			draw_polyline(packed, Color(0.1, 0.12, 0.13, 0.35), 1.0, true)
 
 func _draw_points() -> void:
@@ -134,8 +136,7 @@ func _draw_points() -> void:
 		if not projected_points.has(id):
 			continue
 		var p: Vector2 = projected_points[id]
-		var value: float = float(d[map_mode])
-		var col: Color = _value_color(value)
+		var col: Color = district_colors.get(id, _value_color(float(d[map_mode]))) as Color
 		var radius: float = 8.0 if id == selected_id else 5.0
 		draw_circle(p, radius, col)
 		if id == selected_id or id == hovered_id:
