@@ -1,0 +1,10 @@
+on_actions = {
+	on_yearly_pulse = {
+		effect = {
+			every_country = {
+				limit = { tag = ALB }
+				country_event = { id = dvr.3 }
+			}
+		}
+	}
+}

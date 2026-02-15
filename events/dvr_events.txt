@@ -1,0 +1,23 @@
+add_namespace = dvr
+
+country_event = {
+	id = dvr.3
+	hidden = yes
+	is_triggered_only = yes
+
+	trigger = {
+		tag = ALB
+		NOT = { has_country_flag = dvr_1938_transition_done }
+		date > 1938.1.1
+	}
+
+	immediate = {
+		set_country_flag = dvr_1938_transition_done
+		create_country_leader = {
+			name = "Александр Великий Маричев"
+			desc = "POLITICS_ALEXANDER_MARICHEV_DESC"
+			picture = "gfx/leaders/SOV/Portrait_Soviet_Union_Stalin.dds"
+			ideology = pagan_militarism
+		}
+	}
+}

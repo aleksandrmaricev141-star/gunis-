@@ -1,0 +1,23 @@
+capital = 44
+
+set_politics = {
+	ruling_party = neutrality
+	last_election = "1936.1.1"
+	election_frequency = 48
+	elections_allowed = no
+}
+
+set_popularities = {
+	democratic = 5
+	fascism = 10
+	communism = 5
+	neutrality = 80
+}
+
+create_country_leader = {
+	name = "Олег Перунович"
+	desc = "POLITICS_OLEG_PERUNOVICH_DESC"
+	picture = "gfx/leaders/GER/Portrait_Germany_Adolf_Hitler.dds"
+	expire = "1938.1.1"
+	ideology = pagan_militarism
+}

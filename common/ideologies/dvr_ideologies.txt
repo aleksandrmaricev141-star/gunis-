@@ -1,0 +1,10 @@
+ideologies = {
+	neutrality = {
+		types = {
+			despotism
+			oligarchism
+			moderatism
+			pagan_militarism
+		}
+	}
+}
