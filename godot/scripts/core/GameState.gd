@@ -7,7 +7,7 @@ var rank: String = "Глава района"
 var map_mode: String = "LOY"
 var is_paused: bool = false
 
-var resources: Dictionary = {"BUD":1200.0, "POL":120.0, "CAD":24.0, "EXP":35.0, "MED":28.0, "debt":180.0}
+var resources: Dictionary = {"BUD":1200.0, "POL":120.0, "CAD":24.0, "EXP":35.0, "MED":28.0, "debt":180.0, "debt_rate":0.08}
 var districts: Array[Dictionary] = []
 var selected_id: String = ""
 var player_district_id: String = ""
@@ -22,6 +22,9 @@ func setup(district_data: Array) -> void:
 	for d in district_data:
 		var copy: Dictionary = (d as Dictionary).duplicate(true)
 		copy["budget"] = {"infra":35, "social":10, "business":10, "apk":15, "housing":20, "reserve":10}
+		copy["DIST_BUD"] = 50.0 + float(copy["POP"]) * 1.2
+		copy["SUP"] = clamp(float(copy["LOY"]), 0.0, 100.0)
+		copy["NPS"] = clamp(35.0 + (float(copy["ECO"]) - 40.0) * 0.8, 0.0, 100.0)
 		districts.append(copy)
 		var id: String = String(copy["id"])
 		district_colors[id] = _generate_color(id)
@@ -65,6 +68,9 @@ func district_name(id: String) -> String:
 			return String(d["name"])
 	return id
 
+func can_play_as(id: String) -> bool:
+	return id == player_district_id
+
 func toggle_pause() -> bool:
 	is_paused = not is_paused
 	add_log("Пауза: %s" % ("включена" if is_paused else "снята"))
@@ -94,12 +100,12 @@ func _recompute_scores() -> void:
 	var federal: float = clamp(50.0 + (float(resources["POL"]) - 100.0) / 2.0, 0.0, 100.0)
 	career_score = 0.35 * rdi + 0.25 * loyalty_idx + 0.20 * crisis_score + 0.20 * federal
 
-	if career_score >= 85.0:
-		rank = "Губернатор"
-	elif career_score >= 75.0:
-		rank = "Вице-губернатор"
-	elif career_score >= 60.0:
-		rank = "Кандидат на повышение"
+	if career_score >= 88.0:
+		rank = "Губернатор области"
+	elif career_score >= 80.0:
+		rank = "Мэр Орла + глава фаланги"
+	elif career_score >= 70.0:
+		rank = "Глава фаланги"
 	else:
 		rank = "Глава района"
 
@@ -107,6 +113,32 @@ func add_log(message: String) -> void:
 	logs.append("[%d/%02d] %s" % [year, month, message])
 	if logs.size() > 120:
 		logs = logs.slice(logs.size() - 120, logs.size())
+
+func take_loan(amount: float, rate: float = 0.10) -> void:
+	if amount <= 0.0:
+		add_log("Займ отклонён: некорректная сумма")
+		return
+	resources["BUD"] = float(resources["BUD"]) + amount
+	resources["debt"] = float(resources["debt"]) + amount
+	resources["debt_rate"] = clamp(rate, 0.03, 0.25)
+	add_log("Взят займ %.1f под %.1f%%" % [amount, float(resources["debt_rate"]) * 100.0])
+
+func launch_foreign_tender() -> void:
+	var cost: float = 80.0
+	if float(resources["POL"]) < 20.0 or float(resources["BUD"]) < cost:
+		add_log("Тендер отклонён: не хватает POL/BUD")
+		return
+	resources["BUD"] = float(resources["BUD"]) - cost
+	resources["POL"] = float(resources["POL"]) - 20.0
+	var success_chance: float = 0.45 + float(resources["EXP"]) / 500.0
+	if randf() < success_chance:
+		for d in districts:
+			d["INF"] = clamp(float(d["INF"]) + 1.0, 0.0, 100.0)
+			d["ECO"] = clamp(float(d["ECO"]) + 0.6, 0.0, 100.0)
+		add_log("Иностранный тендер выигран: +INF/+ECO")
+	else:
+		resources["MED"] = clamp(float(resources["MED"]) - 3.0, 0.0, 120.0)
+		add_log("Тендер проигран: репутационный ущерб")
 
 func process_month() -> void:
 	if is_paused:
@@ -120,11 +152,18 @@ func process_month() -> void:
 		d["ECO"] = clamp(float(d["ECO"]) + 0.25 * float(d["LOG"]) * (1.0 + float(b["business"]) / 100.0) - float(d["RISK"]) / 220.0, 0.0, 100.0)
 		d["SERV"] = clamp(float(d["SERV"]) + float(b["social"]) / 120.0 + float(b["housing"]) / 130.0 - float(d["RISK"]) / 160.0, 0.0, 100.0)
 		d["LOY"] = clamp(float(d["LOY"]) + 0.15 * ((float(d["SERV"]) - 50.0) / 10.0) + 0.1 * ((float(d["ECO"]) - 50.0) / 10.0) - float(d["RISK"]) / 200.0, 0.0, 100.0)
+		d["SUP"] = clamp(0.6 * float(d["LOY"]) + 0.4 * float(d["SERV"]), 0.0, 100.0)
+		var nps_delta: float = 0.15 + (float(d["SUP"]) - 50.0) / 250.0 - float(d["RISK"]) / 500.0
+		if String(d["id"]) != player_district_id:
+			nps_delta += 0.10
+		d["NPS"] = clamp(float(d["NPS"]) + nps_delta, 0.0, 100.0)
+		d["DIST_BUD"] = clamp(float(d["DIST_BUD"]) + float(d["ECO"]) * 0.2 - float(d["RISK"]) * 0.08, 10.0, 900.0)
 		d["RISK"] = clamp(float(d["RISK"]) - 0.35 + randf_range(-0.2, 0.5), 0.0, 100.0)
 
 	var avg_eco: float = avg("ECO")
 	var avg_loy: float = avg("LOY")
-	var delta_bud: float = avg_eco * 12.0 * (0.12 + avg_eco / 500.0) + 30.0 - 12.0 - (55.0 / 9.0)
+	var debt_service: float = float(resources["debt"]) * float(resources["debt_rate"]) / 12.0
+	var delta_bud: float = avg_eco * 12.0 * (0.12 + avg_eco / 500.0) + 30.0 - 12.0 - (55.0 / 9.0) - debt_service
 	resources["BUD"] = clamp(float(resources["BUD"]) + delta_bud, 0.0, 5000.0)
 	resources["POL"] = clamp(float(resources["POL"]) + 0.4 * (avg_loy - 50.0) / 10.0, 0.0, 300.0)
 	resources["EXP"] = clamp(float(resources["EXP"]) + 0.2, 0.0, 300.0)

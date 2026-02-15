@@ -7,13 +7,20 @@ var state := GameState.new()
 var border: Array = []
 
 var header_label: Label
-var details: RichTextLabel
+var district_info: RichTextLabel
 var metrics: Label
 var log_box: RichTextLabel
 var map_canvas: MapCanvas
 var mode_option: OptionButton
 var hovered_id: String = ""
 var pause_btn: Button
+
+var tab_container: TabContainer
+var tab_politics: RichTextLabel
+var tab_infra: RichTextLabel
+var tab_economy: RichTextLabel
+var tab_social: RichTextLabel
+var tab_security: RichTextLabel
 
 var start_menu: PanelContainer
 var district_picker: OptionButton
@@ -23,6 +30,11 @@ func _ready() -> void:
 	_build_ui()
 	_refresh()
 	_show_start_menu()
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_ESCAPE:
+		state.toggle_pause()
+		_refresh()
 
 func _load_data() -> void:
 	var f := FileAccess.open("res://data/districts.json", FileAccess.READ)
@@ -79,33 +91,61 @@ func _build_ui() -> void:
 	left.add_child(map_canvas)
 
 	var right := VBoxContainer.new()
-	right.custom_minimum_size = Vector2(560, 900)
+	right.custom_minimum_size = Vector2(590, 900)
 	root.add_child(right)
 
-	details = RichTextLabel.new()
-	details.custom_minimum_size = Vector2(560, 360)
-	right.add_child(details)
+	district_info = RichTextLabel.new()
+	district_info.custom_minimum_size = Vector2(590, 220)
+	right.add_child(district_info)
 
 	var actions := HBoxContainer.new()
 	right.add_child(actions)
 
 	var crisis_btn := Button.new()
-	crisis_btn.text = "Антикризисная команда"
+	crisis_btn.text = "Антикризис"
 	crisis_btn.pressed.connect(_on_crisis)
 	actions.add_child(crisis_btn)
 
 	var eco_btn := Button.new()
-	eco_btn.text = "Экономический штаб"
+	eco_btn.text = "Экоштаб"
 	eco_btn.pressed.connect(_on_eco)
 	actions.add_child(eco_btn)
 
+	var loan_btn := Button.new()
+	loan_btn.text = "Займ +200"
+	loan_btn.pressed.connect(_on_loan)
+	actions.add_child(loan_btn)
+
+	var tender_btn := Button.new()
+	tender_btn.text = "Иностр. тендер"
+	tender_btn.pressed.connect(_on_tender)
+	actions.add_child(tender_btn)
+
 	metrics = Label.new()
-	metrics.custom_minimum_size = Vector2(560, 80)
+	metrics.custom_minimum_size = Vector2(590, 70)
 	right.add_child(metrics)
 
+	tab_container = TabContainer.new()
+	tab_container.custom_minimum_size = Vector2(590, 230)
+	right.add_child(tab_container)
+
+	tab_politics = _add_tab("Политика")
+	tab_infra = _add_tab("Инфраструктура")
+	tab_economy = _add_tab("Экономика")
+	tab_social = _add_tab("Социальная сфера")
+	tab_security = _add_tab("Безопасность")
+
 	log_box = RichTextLabel.new()
-	log_box.custom_minimum_size = Vector2(560, 390)
+	log_box.custom_minimum_size = Vector2(590, 260)
 	right.add_child(log_box)
+
+func _add_tab(name: String) -> RichTextLabel:
+	var box := RichTextLabel.new()
+	box.name = name
+	box.fit_content = true
+	tab_container.add_child(box)
+	tab_container.set_tab_title(tab_container.get_tab_count() - 1, name)
+	return box
 
 func _show_start_menu() -> void:
 	start_menu = PanelContainer.new()
@@ -125,7 +165,7 @@ func _show_start_menu() -> void:
 	vb.add_child(title)
 
 	var hint := Label.new()
-	hint.text = "Выберите район, за который начинаете карьеру"
+	hint.text = "Выберите район, за который вы играете"
 	vb.add_child(hint)
 
 	district_picker = OptionButton.new()
@@ -148,26 +188,30 @@ func _on_start_game() -> void:
 	_refresh()
 
 func _refresh() -> void:
-	var d := state.selected_district()
-	var pd := state.player_district()
-	header_label.text = "Godot-only | Старт 2020 | Месяц %02d Год %d | Игрок: %s | BUD %.1f POL %.1f CAD %.0f EXP %.1f MED %.1f" % [
-		state.month, state.year, pd["name"], state.resources["BUD"], state.resources["POL"], state.resources["CAD"], state.resources["EXP"], state.resources["MED"]
+	var d: Dictionary = state.selected_district()
+	var pd: Dictionary = state.player_district()
+	header_label.text = "HOI4-style UI | %02d.%d | Роль: %s | Игрок: %s | BUD %.1f POL %.1f CAD %.0f EXP %.1f MED %.1f Debt %.1f" % [
+		state.month, state.year, state.rank, pd["name"], state.resources["BUD"], state.resources["POL"], state.resources["CAD"], state.resources["EXP"], state.resources["MED"], state.resources["debt"]
 	]
-	pause_btn.text = "Пауза: ON" if state.is_paused else "Пауза: OFF"
+	pause_btn.text = "Пауза [ESC]: ON" if state.is_paused else "Пауза [ESC]: OFF"
 
 	var hover_label: String = hovered_id if hovered_id != "" else "—"
 	var player_mark: String = "ДА" if String(d["id"]) == state.player_district_id else "нет"
 	var budget: Dictionary = d["budget"]
-	details.text = "[b]%s[/b] (%s)\nИгровой район: %s\nPOP %sk | INF %.1f | ECO %.1f | LOY %.1f | SERV %.1f | RISK %.1f | LOG %.2f\nБюджет: infra %s / social %s / business %s / apk %s / housing %s / reserve %s\nНаведение: %s\n\n[code]Формулы[/code]\nΔBUD = TaxBase × (0.12 + ECO/500) + Transfers - DebtService - Leakage\nCS = 0.35×EfficiencyIndex + 0.25×LoyaltyIndex + 0.20×CrisisScore + 0.20×FederalTrust\n\nКлик по карте выбирает район/город." % [
-		d["name"], d["type"], player_mark, d["POP"], d["INF"], d["ECO"], d["LOY"], d["SERV"], d["RISK"], d["LOG"], budget["infra"], budget["social"], budget["business"], budget["apk"], budget["housing"], budget["reserve"], hover_label
+	district_info.text = "[b]%s[/b] (%s)\nИгровой район: %s\nНаселение: %sk\nБюджет района: %.1f\nПоддержка народа: %.1f\nNPS: %.1f\nINF %.1f | ECO %.1f | LOY %.1f | SERV %.1f | RISK %.1f\nБюджет-сплит: infra %s / social %s / business %s / apk %s / housing %s / reserve %s\nНаведение: %s" % [
+		d["name"], d["type"], player_mark, d["POP"], d["DIST_BUD"], d["SUP"], d["NPS"], d["INF"], d["ECO"], d["LOY"], d["SERV"], d["RISK"], budget["infra"], budget["social"], budget["business"], budget["apk"], budget["housing"], budget["reserve"], hover_label
 	]
 
-	var rdi := state.weighted_rdi()
-	var victory := state.rank == "Губернатор" and rdi >= 75.0 and state.support_score >= 60.0
-	metrics.text = "CS %.1f | SUP %.1f | RDI %.1f\nДолжность: %s\nПобеда: %s" % [state.career_score, state.support_score, rdi, state.rank, ("Да" if victory else "Нет")]
+	metrics.text = "CS %.1f | SUP %.1f | RDI %.1f\nКарьера: Глава района → Глава фаланги → Мэр Орла+фаланга → Губернатор" % [state.career_score, state.support_score, state.weighted_rdi()]
+
+	tab_politics.text = "• Политический капитал: %.1f\n• Поддержка населения: %.1f\n• Карьерный уровень: %s" % [state.resources["POL"], d["SUP"], state.rank]
+	tab_infra.text = "• INF: %.1f\n• Иностранный тендер улучшает INF/ECO\n• LOG: %.2f" % [d["INF"], d["LOG"]]
+	tab_economy.text = "• ECO: %.1f\n• Районный бюджет: %.1f\n• Банк: долг %.1f под %.1f%%" % [d["ECO"], d["DIST_BUD"], state.resources["debt"], float(state.resources["debt_rate"]) * 100.0]
+	tab_social.text = "• Население: %sk\n• SERV: %.1f\n• LOY: %.1f\n• SUP: %.1f\n• NPS: %.1f" % [d["POP"], d["SERV"], d["LOY"], d["SUP"], d["NPS"]]
+	tab_security.text = "• RISK: %.1f\n• Антикризисные меры снижают риск\n• Внеигровые районы развивают NPS сами" % [d["RISK"]]
 
 	var lines := PackedStringArray()
-	for i in range(state.logs.size() - 1, max(state.logs.size() - 28, 0), -1):
+	for i in range(state.logs.size() - 1, max(state.logs.size() - 22, 0), -1):
 		lines.append(state.logs[i])
 	log_box.text = "\n".join(lines)
 
@@ -191,6 +235,10 @@ func _on_mode_selected(index: int) -> void:
 	_refresh()
 
 func _on_district_clicked(id: String) -> void:
+	if not state.can_play_as(id):
+		state.add_log("Нельзя переключиться и играть за другой район после старта")
+		_refresh()
+		return
 	state.set_selected_by_id(id)
 	_refresh()
 
@@ -200,6 +248,14 @@ func _on_crisis() -> void:
 
 func _on_eco() -> void:
 	state.deploy_eco_team()
+	_refresh()
+
+func _on_loan() -> void:
+	state.take_loan(200.0, 0.12)
+	_refresh()
+
+func _on_tender() -> void:
+	state.launch_foreign_tender()
 	_refresh()
 
 func _on_district_hovered(id: String) -> void:
