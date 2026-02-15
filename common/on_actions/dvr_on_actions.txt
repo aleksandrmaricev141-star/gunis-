@@ -8,8 +8,12 @@ on_actions = {
 		}
 	}
 
-	on_yearly_pulse = {
+	on_daily_pulse = {
 		effect = {
+			every_country = {
+				limit = { tag = ALB }
+				country_event = { id = dvr.10 }
+			}
 			every_country = {
 				limit = { tag = DVR }
 				country_event = { id = dvr.3 }

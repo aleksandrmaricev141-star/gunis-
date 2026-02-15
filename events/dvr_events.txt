@@ -1,5 +1,23 @@
 add_namespace = dvr
 
+
+country_event = {
+	id = dvr.10
+	hidden = yes
+	is_triggered_only = yes
+
+	trigger = {
+		tag = ALB
+		NOT = { has_global_flag = dvr_world_init_done }
+		has_full_control_of_state = 44
+	}
+
+	immediate = {
+		set_global_flag = dvr_world_init_done
+		country_event = { id = dvr.1 }
+	}
+}
+
 country_event = {
 	id = dvr.1
 	hidden = yes
