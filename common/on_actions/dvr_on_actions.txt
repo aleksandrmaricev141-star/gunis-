@@ -1,15 +1,19 @@
-on_startup = {
-	effect = {
-		ALB = {
-			country_event = { id = dvr.1 }
+on_actions = {
+	on_startup = {
+		effect = {
+			every_country = {
+				limit = { tag = ALB }
+				country_event = { id = dvr.1 }
+			}
 		}
 	}
-}
 
-on_yearly_pulse = {
-	effect = {
-		DVR = {
-			country_event = { id = dvr.3 }
+	on_yearly_pulse = {
+		effect = {
+			every_country = {
+				limit = { tag = DVR }
+				country_event = { id = dvr.3 }
+			}
 		}
 	}
 }
