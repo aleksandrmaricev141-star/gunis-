@@ -14,6 +14,7 @@ var map_rect: Rect2 = Rect2(0, 0, 960, 780)
 var map_texture: Texture2D
 var projected_points: Dictionary = {}
 var district_cells: Dictionary = {}
+var border_projected: Array[Vector2] = []
 
 func configure(border: Array, district_items: Array, selected: String, mode: String) -> void:
 	border_points = border
@@ -44,7 +45,8 @@ func _draw() -> void:
 func _rebuild_geometry() -> void:
 	projected_points.clear()
 	district_cells.clear()
-	if districts.is_empty():
+	border_projected = _project_border_polygon()
+	if districts.is_empty() or border_projected.size() < 3:
 		return
 	for d in districts:
 		var id: String = String(d["id"])
@@ -53,12 +55,9 @@ func _rebuild_geometry() -> void:
 	for d in districts:
 		var id: String = String(d["id"])
 		var p: Vector2 = projected_points[id]
-		var cell: Array[Vector2] = [
-			map_rect.position,
-			Vector2(map_rect.end.x, map_rect.position.y),
-			map_rect.end,
-			Vector2(map_rect.position.x, map_rect.end.y)
-		]
+		var cell: Array[Vector2] = []
+		for bp in border_projected:
+			cell.append(bp)
 		for other in districts:
 			var other_id: String = String(other["id"])
 			if other_id == id:
@@ -94,11 +93,20 @@ func _clip_halfplane(poly: Array[Vector2], n: Vector2, c: float) -> Array[Vector
 	return out
 
 func _draw_outline() -> void:
-	var pts: PackedVector2Array = PackedVector2Array()
+	if border_projected.is_empty():
+		border_projected = _project_border_polygon()
+	if border_projected.size() < 3:
+		return
+	var pts: PackedVector2Array = PackedVector2Array(border_projected)
+	pts.append(border_projected[0])
+	draw_polyline(pts, Color(0.9, 1.0, 0.95, 0.8), 2.0, true)
+
+func _project_border_polygon() -> Array[Vector2]:
+	var out: Array[Vector2] = []
 	for p in border_points:
 		var pp: Array = p
-		pts.append(_project_geo(float(pp[1]), float(pp[0])))
-	draw_polyline(pts, Color(0.9, 1.0, 0.95, 0.8), 2.0, true)
+		out.append(_project_geo(float(pp[1]), float(pp[0])))
+	return out
 
 func _draw_cells_overlay() -> void:
 	for d in districts:
@@ -156,7 +164,7 @@ func _gui_input(event: InputEvent) -> void:
 			_select_nearest(pos)
 
 func _update_hover(pos: Vector2) -> void:
-	if not map_rect.has_point(pos):
+	if not map_rect.has_point(pos) or not Geometry2D.is_point_in_polygon(pos, PackedVector2Array(border_projected)):
 		if hovered_id != "":
 			hovered_id = ""
 			queue_redraw()
