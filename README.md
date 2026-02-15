@@ -14,6 +14,7 @@
 ## Надежный запуск событий
 - На старте игры вызывается `dvr.1`.
 - Дополнительно каждый день `ALB` проверяется событием `dvr.10` (с глобальным флагом), чтобы инициализация сработала даже если стартовый вызов был пропущен движком.
+- Добавлен второй файл on_actions в «legacy»-формате (без обертки `on_actions = { ... }`) для совместимости с разными версиями парсинга.
 
 ## Структура
 - `common/country_tags/00_dvr_country_tags.txt`
@@ -21,6 +22,7 @@
 - `history/countries/DVR - Gosudarstvo_drevnih_russov.txt`
 - `events/dvr_events.txt`
 - `common/on_actions/dvr_on_actions.txt`
+- `common/on_actions/dvr_on_actions_legacy.txt`
 - `localisation/russian/dvr_l_russian.yml`
 
 ## Примечание

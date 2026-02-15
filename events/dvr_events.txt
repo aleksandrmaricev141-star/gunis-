@@ -33,6 +33,10 @@ country_event = {
 			add_core_of = DVR
 		}
 		release = DVR
+		44 = {
+			set_state_owner = DVR
+			set_state_controller = DVR
+		}
 		DVR = {
 			set_capital = 44
 			country_event = { id = dvr.2 }
