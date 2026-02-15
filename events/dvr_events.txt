@@ -1,0 +1,75 @@
+add_namespace = dvr
+
+country_event = {
+	id = dvr.1
+	hidden = yes
+	is_triggered_only = yes
+
+	trigger = {
+		tag = YUG
+		has_full_control_of_state = 106
+	}
+
+	immediate = {
+		106 = {
+			add_core_of = DVR
+		}
+		release = DVR
+		DVR = {
+			set_capital = 106
+			country_event = { id = dvr.2 }
+		}
+	}
+}
+
+country_event = {
+	id = dvr.2
+	hidden = yes
+	is_triggered_only = yes
+
+	immediate = {
+		set_country_flag = dvr_initialized
+		set_politics = {
+			ruling_party = neutrality
+			last_election = "1936.1.1"
+			election_frequency = 48
+			elections_allowed = no
+		}
+		set_popularities = {
+			democratic = 5
+			fascism = 10
+			communism = 5
+			neutrality = 80
+		}
+		create_country_leader = {
+			name = "Олег Перунович"
+			desc = "POLITICS_OLEG_PERUNOVICH_DESC"
+			picture = "gfx/leaders/GER/Portrait_Germany_Adolf_Hitler.dds"
+			expire = "1938.1.1"
+			ideology = despotism
+		}
+	}
+}
+
+country_event = {
+	id = dvr.3
+	hidden = yes
+	is_triggered_only = yes
+
+	trigger = {
+		tag = DVR
+		has_country_flag = dvr_initialized
+		NOT = { has_country_flag = dvr_1938_transition_done }
+		date > 1938.1.1
+	}
+
+	immediate = {
+		set_country_flag = dvr_1938_transition_done
+		create_country_leader = {
+			name = "Александр Великий Маричев"
+			desc = "POLITICS_ALEXANDER_MARICHEV_DESC"
+			picture = "gfx/leaders/SOV/Portrait_Soviet_Union_Stalin.dds"
+			ideology = despotism
+		}
+	}
+}

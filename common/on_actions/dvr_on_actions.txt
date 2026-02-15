@@ -1,0 +1,15 @@
+on_startup = {
+	effect = {
+		YUG = {
+			country_event = { id = dvr.1 }
+		}
+	}
+}
+
+on_yearly_pulse = {
+	effect = {
+		DVR = {
+			country_event = { id = dvr.3 }
+		}
+	}
+}
