@@ -1,110 +1,12 @@
 add_namespace = dvr
 
-
-country_event = {
-	id = dvr.100
-	hidden = yes
-
-	trigger = {
-		tag = ALB
-		NOT = { has_global_flag = dvr_world_init_done }
-		has_full_control_of_state = 44
-	}
-
-	mean_time_to_happen = {
-		days = 1
-	}
-
-	immediate = {
-		set_global_flag = dvr_world_init_done
-		country_event = { id = dvr.1 }
-	}
-}
-
-country_event = {
-	id = dvr.10
-	hidden = yes
-	is_triggered_only = yes
-
-	trigger = {
-		tag = ALB
-		NOT = { has_global_flag = dvr_world_init_done }
-		has_full_control_of_state = 44
-	}
-
-	immediate = {
-		set_global_flag = dvr_world_init_done
-		country_event = { id = dvr.1 }
-	}
-}
-
-country_event = {
-	id = dvr.1
-	hidden = yes
-	is_triggered_only = yes
-
-	trigger = {
-		tag = ALB
-		has_full_control_of_state = 44
-	}
-
-	immediate = {
-		44 = {
-			add_core_of = DVR
-		}
-		release = DVR
-		44 = {
-			set_state_owner = DVR
-			set_state_controller = DVR
-		}
-		DVR = {
-			set_capital = 44
-			country_event = { id = dvr.2 }
-			annex_country = {
-				target = ALB
-				transfer_troops = no
-			}
-		}
-	}
-}
-
-country_event = {
-	id = dvr.2
-	hidden = yes
-	is_triggered_only = yes
-
-	immediate = {
-		set_country_flag = dvr_initialized
-		set_politics = {
-			ruling_party = neutrality
-			last_election = "1936.1.1"
-			election_frequency = 48
-			elections_allowed = no
-		}
-		set_popularities = {
-			democratic = 5
-			fascism = 10
-			communism = 5
-			neutrality = 80
-		}
-		create_country_leader = {
-			name = "Олег Перунович"
-			desc = "POLITICS_OLEG_PERUNOVICH_DESC"
-			picture = "gfx/leaders/GER/Portrait_Germany_Adolf_Hitler.dds"
-			expire = "1938.1.1"
-			ideology = despotism
-		}
-	}
-}
-
 country_event = {
 	id = dvr.3
 	hidden = yes
 	is_triggered_only = yes
 
 	trigger = {
-		tag = DVR
-		has_country_flag = dvr_initialized
+		tag = ALB
 		NOT = { has_country_flag = dvr_1938_transition_done }
 		date > 1938.1.1
 	}
