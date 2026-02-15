@@ -12,6 +12,7 @@ var metrics: Label
 var log_box: RichTextLabel
 var map_canvas: MapCanvas
 var mode_option: OptionButton
+var hovered_id: String = ""
 
 func _ready() -> void:
 	_load_data()
@@ -64,6 +65,7 @@ func _build_ui() -> void:
 	map_canvas = MapCanvas.new()
 	map_canvas.custom_minimum_size = Vector2(980, 820)
 	map_canvas.district_clicked.connect(_on_district_clicked)
+	map_canvas.district_hovered.connect(_on_district_hovered)
 	left.add_child(map_canvas)
 
 	var right := VBoxContainer.new()
@@ -101,8 +103,9 @@ func _refresh() -> void:
 		state.districts.size() - 3, state.month, state.year, state.resources["BUD"], state.resources["POL"], state.resources["CAD"], state.resources["EXP"], state.resources["MED"]
 	]
 
-	details.text = "[b]%s[/b] (%s)\nPOP %sk | INF %.1f | ECO %.1f | LOY %.1f | SERV %.1f | RISK %.1f | LOG %.2f\n\n[code]Формулы[/code]\nΔBUD = TaxBase × (0.12 + ECO/500) + Transfers - DebtService - Leakage\nCS = 0.35×EfficiencyIndex + 0.25×LoyaltyIndex + 0.20×CrisisScore + 0.20×FederalTrust\n\nКлик по карте выбирает район/город." % [
-		d["name"], d["type"], d["POP"], d["INF"], d["ECO"], d["LOY"], d["SERV"], d["RISK"], d["LOG"]
+	var hover_label: String = hovered_id if hovered_id != "" else "—"
+	details.text = "[b]%s[/b] (%s)\nPOP %sk | INF %.1f | ECO %.1f | LOY %.1f | SERV %.1f | RISK %.1f | LOG %.2f\nНаведение: %s\n\n[code]Формулы[/code]\nΔBUD = TaxBase × (0.12 + ECO/500) + Transfers - DebtService - Leakage\nCS = 0.35×EfficiencyIndex + 0.25×LoyaltyIndex + 0.20×CrisisScore + 0.20×FederalTrust\n\nКлик по карте выбирает район/город." % [
+				d["name"], d["type"], d["POP"], d["INF"], d["ECO"], d["LOY"], d["SERV"], d["RISK"], d["LOG"], hover_label
 	]
 
 	var rdi := state.weighted_rdi()
@@ -139,4 +142,8 @@ func _on_crisis() -> void:
 
 func _on_eco() -> void:
 	state.deploy_eco_team()
+	_refresh()
+
+func _on_district_hovered(id: String) -> void:
+	hovered_id = id
 	_refresh()
