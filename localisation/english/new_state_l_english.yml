@@ -2,3 +2,5 @@ l_english:
  NGS:0 "New State"
  NGS_DEF:0 "New State"
  NGS_ADJ:0 "New State"
+ BOOKMARK_NGS:0 "New State"
+ BOOKMARK_NGS_DESC:0 "Start as New State (NGS)."

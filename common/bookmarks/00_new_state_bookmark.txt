@@ -1,0 +1,9 @@
+bookmark = {
+	name = "BOOKMARK_NGS"
+	desc = "BOOKMARK_NGS_DESC"
+	date = 1936.1.1.12
+	default_country = "NGS"
+	country = {
+		NGS
+	}
+}
