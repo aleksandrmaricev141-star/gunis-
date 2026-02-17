@@ -1,0 +1,5 @@
+on_startup = {
+	effect = {
+		country_event = { id = NGS.1 days = 1 }
+	}
+}
