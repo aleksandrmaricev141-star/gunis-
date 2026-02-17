@@ -1,0 +1,16 @@
+on_startup = {
+	effect = {
+		every_state = {
+			limit = {
+				OR = {
+					contains_province = 7082
+					contains_province = 12025
+					contains_province = 11954
+				}
+			}
+			add_core_of = NGS
+			set_state_owner = NGS
+			set_state_controller = NGS
+		}
+	}
+}

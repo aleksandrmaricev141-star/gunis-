@@ -1,0 +1,4 @@
+NGS = {
+	color = rgb { 212 175 55 }
+	color_ui = rgb { 212 175 55 }
+}
