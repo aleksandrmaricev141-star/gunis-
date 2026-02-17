@@ -1,24 +1,26 @@
 on_startup = {
 	effect = {
-		7082 = {
-			state = {
-				add_core_of = NGS
-				set_state_owner = NGS
-				set_state_controller = NGS
+		every_state = {
+			limit = {
+				OR = {
+					any_province = { id = 7082 }
+					any_province = { id = 12025 }
+					any_province = { id = 11954 }
+				}
 			}
-		}
-		12025 = {
-			state = {
-				add_core_of = NGS
-				set_state_owner = NGS
-				set_state_controller = NGS
+			if = {
+				limit = { any_province = { id = 7082 } }
+				save_global_event_target_as = ngs_capital_state
 			}
+			add_core_of = NGS
+			set_state_owner = NGS
+			set_state_controller = NGS
 		}
-		11954 = {
-			state = {
-				add_core_of = NGS
-				set_state_owner = NGS
-				set_state_controller = NGS
+
+		if = {
+			limit = { exists = event_target:ngs_capital_state }
+			NGS = {
+				set_capital = event_target:ngs_capital_state
 			}
 		}
 	}

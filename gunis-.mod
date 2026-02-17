@@ -1,4 +1,4 @@
 name="Новое государство"
 path="mod/gunis-"
-supported_version="1.10.4"
+supported_version="1.10.*"
 remote_file_id=""
