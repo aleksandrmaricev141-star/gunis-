@@ -1,14 +1,25 @@
 on_startup = {
 	effect = {
-		450 = {
-			add_core_of = NGS
-			set_state_owner = NGS
-			set_state_controller = NGS
+		7082 = {
+			state = {
+				add_core_of = NGS
+				set_state_owner = NGS
+				set_state_controller = NGS
+			}
 		}
-		451 = {
-			add_core_of = NGS
-			set_state_owner = NGS
-			set_state_controller = NGS
+		12025 = {
+			state = {
+				add_core_of = NGS
+				set_state_owner = NGS
+				set_state_controller = NGS
+			}
+		}
+		11954 = {
+			state = {
+				add_core_of = NGS
+				set_state_owner = NGS
+				set_state_controller = NGS
+			}
 		}
 	}
 }
