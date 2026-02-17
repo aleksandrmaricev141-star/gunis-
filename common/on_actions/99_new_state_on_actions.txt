@@ -1,5 +1,14 @@
 on_startup = {
 	effect = {
-		country_event = { id = NGS.1 days = 1 }
+		450 = {
+			add_core_of = NGS
+			set_state_owner = NGS
+			set_state_controller = NGS
+		}
+		451 = {
+			add_core_of = NGS
+			set_state_owner = NGS
+			set_state_controller = NGS
+		}
 	}
 }
