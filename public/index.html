@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Скифы — Пролог</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="container">
+    <header class="hero">
+      <h1>🐎 Скифы</h1>
+      <p>Hardcore MMORPG: кланы, политика, сезоны, войны за Великую Степь.</p>
+    </header>
+
+    <section class="card">
+      <h2>Регистрация героя</h2>
+      <form id="registerForm" class="grid">
+        <input name="name" placeholder="Имя" required />
+        <input name="email" type="email" placeholder="Email" required />
+        <input name="password" type="password" placeholder="Пароль" required />
+        <input name="password_confirm" type="password" placeholder="Подтверждение" required />
+        <select name="faction" required>
+          <option value="">Фракция</option>
+          <option>Степные кланы</option>
+          <option>Северные варвары</option>
+          <option>Остатки Империи</option>
+        </select>
+        <select name="class" required>
+          <option value="">Класс</option>
+          <option value="warrior">Воин</option>
+          <option value="archer">Лучник</option>
+          <option value="defender">Защитник</option>
+          <option value="rider">Всадник</option>
+        </select>
+        <button type="submit">Создать персонажа</button>
+      </form>
+      <p id="registerMsg" class="msg"></p>
+    </section>
+
+    <section class="card">
+      <h2>Боевая математика</h2>
+      <form id="battleForm" class="grid small">
+        <h3>Атакующий</h3>
+        <input name="a_level" type="number" min="1" value="10" placeholder="Уровень" />
+        <input name="a_strength" type="number" min="1" value="20" placeholder="Сила" />
+        <input name="a_agility" type="number" min="1" value="15" placeholder="Ловкость" />
+        <input name="a_stamina" type="number" min="1" value="18" placeholder="Выносливость" />
+
+        <h3>Защитник</h3>
+        <input name="d_level" type="number" min="1" value="10" placeholder="Уровень" />
+        <input name="d_strength" type="number" min="1" value="16" placeholder="Сила" />
+        <input name="d_agility" type="number" min="1" value="14" placeholder="Ловкость" />
+        <input name="d_stamina" type="number" min="1" value="22" placeholder="Выносливость" />
+
+        <button type="submit">Симулировать бой</button>
+      </form>
+      <pre id="battleResult"></pre>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
