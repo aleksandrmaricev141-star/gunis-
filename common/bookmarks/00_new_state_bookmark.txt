@@ -1,9 +1,13 @@
 bookmark = {
 	name = "BOOKMARK_NGS"
 	desc = "BOOKMARK_NGS_DESC"
-	date = 1936.1.1.12
+	date = "1936.1.1.12"
+	picture = "GFX_select_date_1936"
 	default_country = "NGS"
 	country = {
-		NGS
+		NGS = {
+			ideology = neutrality
+			difficulty = "REGULAR"
+		}
 	}
 }
