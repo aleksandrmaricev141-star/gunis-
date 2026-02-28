@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Мини-кликер</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app">
+      <h1>⚡ Мини-кликер</h1>
+      <p class="subtitle">Кликай, копи очки и открывай автокликер.</p>
+
+      <section class="score-panel">
+        <p class="score-label">Очки</p>
+        <p id="score" class="score">0</p>
+      </section>
+
+      <button id="click-btn" class="click-btn" type="button">+1 клик</button>
+
+      <section class="shop">
+        <h2>Магазин</h2>
+        <p class="shop-item">Автокликер: +1/сек</p>
+        <button id="buy-auto" class="buy-btn" type="button">Купить за <span id="auto-cost">15</span></button>
+      </section>
+
+      <p id="status" class="status">Нажми кнопку, чтобы начать.</p>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
